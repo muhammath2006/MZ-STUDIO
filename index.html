@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dream Story Universe Studio</title>
+<style>
+:root {
+  --bg: #0d0d14;
+  --bg2: #13131f;
+  --bg3: #1a1a2e;
+  --bg4: #222235;
+  --surface: #1e1e30;
+  --surface2: #252540;
+  --border: rgba(120,100,255,0.15);
+  --border2: rgba(120,100,255,0.3);
+  --accent: #7c6af7;
+  --accent2: #a08bff;
+  --accent3: #5f4ef0;
+  --gold: #e8b86d;
+  --gold2: #f5d090;
+  --teal: #4ec9b0;
+  --coral: #f48c72;
+  --pink: #d47ab0;
+  --text: #e8e6f8;
+  --text2: #a09cc0;
+  --text3: #6b6890;
+  --success: #4ec9a0;
+  --danger: #f06070;
+  --warn: #e8b86d;
+  --radius: 8px;
+  --radius2: 12px;
+  --radius3: 16px;
+  --sidebar-w: 240px;
+  --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px}
+/* Scrollbars */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+/* Layout */
+#app{display:flex;height:100vh;overflow:hidden}
+/* Sidebar */
+#sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width 0.2s;flex-shrink:0;overflow:hidden}
+#sidebar.collapsed{width:56px}
+.sidebar-logo{padding:16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--gold));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-text{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;line-height:1.2}
+.logo-sub{font-size:10px;color:var(--text3);font-weight:400}
+.sidebar-toggle{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;border-radius:4px;flex-shrink:0}
+.sidebar-toggle:hover{color:var(--text)}
+.sidebar-section{padding:8px 0;flex-shrink:0}
+.sidebar-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;padding:4px 14px 4px;white-space:nowrap;overflow:hidden}
+.nav-item{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer;border-radius:0;color:var(--text2);transition:all 0.15s;position:relative;white-space:nowrap;overflow:hidden;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface);color:var(--text)}
+.nav-item.active{background:rgba(124,106,247,0.15);color:var(--accent2)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--accent)}
+.nav-icon{font-size:16px;flex-shrink:0;width:20px;text-align:center}
+.nav-label{font-size:13px;font-weight:500}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:600}
+.sidebar-footer{margin-top:auto;padding:12px;border-top:1px solid var(--border)}
+.sidebar-scroll{flex:1;overflow-y:auto;overflow-x:hidden}
+/* Main */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+/* Topbar */
+#topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.topbar-title{font-size:15px;font-weight:600;color:var(--text)}
+.topbar-breadcrumb{font-size:12px;color:var(--text3)}
+.topbar-actions{display:flex;gap:8px;margin-left:auto;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);border:1px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;font-size:13px;font-weight:500;transition:all 0.15s;white-space:nowrap}
+.btn:hover{background:var(--surface);border-color:var(--accent)}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent3);border-color:var(--accent3)}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-icon{padding:6px;width:32px;height:32px;justify-content:center}
+.search-bar{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:5px 12px;flex:1;max-width:360px}
+.search-bar input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%}
+.search-bar input::placeholder{color:var(--text3)}
+/* Content */
+#content{flex:1;overflow-y:auto;padding:24px}
+/* Dashboard */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;text-align:center;transition:border-color 0.15s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-num{font-size:28px;font-weight:700;color:var(--accent2);line-height:1}
+.stat-label{font-size:11px;color:var(--text3);margin-top:6px;text-transform:uppercase;letter-spacing:0.05em}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:15px;font-weight:600;color:var(--text)}
+.section-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all 0.15s}
+.card:hover{border-color:var(--border2);background:var(--surface2);transform:translateY(-1px)}
+.card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.card-meta{font-size:11px;color:var(--text3)}
+.card-desc{font-size:12px;color:var(--text2);margin-top:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.tag-accent{background:rgba(124,106,247,0.2);color:var(--accent2)}
+.tag-gold{background:rgba(232,184,109,0.2);color:var(--gold2)}
+.tag-teal{background:rgba(78,201,176,0.2);color:var(--teal)}
+.tag-coral{background:rgba(244,140,114,0.2);color:var(--coral)}
+.tag-pink{background:rgba(212,122,176,0.2);color:var(--pink)}
+.tag-success{background:rgba(78,201,160,0.15);color:var(--success)}
+.tag-danger{background:rgba(240,96,112,0.15);color:var(--danger)}
+/* Progress bar */
+.progress-bar{height:6px;background:var(--bg3);border-radius:3px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width 0.3s}
+/* Form elements */
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px;color:var(--text);font-size:13px;font-family:var(--font);outline:none;transition:border-color 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent)}
+.form-select option{background:var(--bg3);color:var(--text)}
+.form-textarea{resize:vertical;min-height:80px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+/* Panel / Modal */
+.panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.panel{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius3);width:min(600px,95vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.panel-lg{width:min(800px,95vw)}
+.panel-header{display:flex;align-items:center;padding:18px 20px;border-bottom:1px solid var(--border);gap:10px}
+.panel-title{font-size:15px;font-weight:700;color:var(--text);flex:1}
+.panel-body{padding:20px;overflow-y:auto;flex:1}
+.panel-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end}
+/* Editor */
+#editor-container{display:flex;height:100%;gap:0}
+#editor-sidebar{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+#editor-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+#chapter-list{flex:1;overflow-y:auto;padding:8px}
+.chapter-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius);cursor:pointer;color:var(--text2);transition:all 0.15s;font-size:13px}
+.chapter-item:hover{background:var(--surface);color:var(--text)}
+.chapter-item.active{background:rgba(124,106,247,0.15);color:var(--accent2)}
+.chapter-status{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.status-outline{background:var(--text3)}
+.status-draft{background:var(--warn)}
+.status-revision{background:var(--coral)}
+.status-completed{background:var(--success)}
+#editor-area{flex:1;overflow-y:auto;padding:40px 60px}
+#editor-area.focus-mode{padding:80px 120px;background:var(--bg)}
+.editor-title{font-size:28px;font-weight:700;color:var(--text);margin-bottom:8px;background:none;border:none;outline:none;width:100%;font-family:var(--font)}
+.editor-title::placeholder{color:var(--text3)}
+.editor-content{font-size:15px;line-height:1.8;color:var(--text);background:none;border:none;outline:none;width:100%;resize:none;font-family:var(--font);min-height:400px}
+.editor-toolbar{display:flex;align-items:center;gap:4px;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:wrap}
+.toolbar-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:5px 8px;border-radius:4px;font-size:13px;transition:all 0.15s}
+.toolbar-btn:hover{background:var(--surface);color:var(--text)}
+.toolbar-sep{width:1px;height:18px;background:var(--border);margin:0 4px}
+.editor-meta{display:flex;align-items:center;gap:16px;padding:8px 16px;border-top:1px solid var(--border);background:var(--bg2);font-size:12px;color:var(--text3)}
+/* Timeline */
+.timeline{position:relative;padding-left:24px}
+.timeline::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--border2)}
+.timeline-event{position:relative;margin-bottom:20px;padding-left:20px}
+.timeline-dot{position:absolute;left:-25px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--accent);border:2px solid var(--bg2)}
+.timeline-dot.high{background:var(--danger)}
+.timeline-dot.medium{background:var(--warn)}
+.timeline-dot.low{background:var(--success)}
+.timeline-date{font-size:11px;color:var(--text3);margin-bottom:4px}
+.timeline-title{font-size:13px;font-weight:600;color:var(--text)}
+.timeline-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.5}
+/* Character card */
+.char-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;cursor:pointer;transition:all 0.15s}
+.char-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.char-avatar{height:120px;background:linear-gradient(135deg,var(--bg3),var(--surface2));display:flex;align-items:center;justify-content:center;font-size:48px;position:relative}
+.char-avatar-initial{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#fff}
+.char-info{padding:12px}
+.char-name{font-size:14px;font-weight:700;color:var(--text)}
+.char-role{font-size:11px;color:var(--text3);margin-top:2px}
+/* Kanban */
+.kanban-board{display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;height:100%;align-items:flex-start}
+.kanban-col{min-width:220px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);display:flex;flex-direction:column;max-height:100%}
+.kanban-col-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.kanban-col-title{font-size:13px;font-weight:600;color:var(--text)}
+.kanban-col-body{padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
+.kanban-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;cursor:grab;transition:all 0.15s}
+.kanban-card:hover{border-color:var(--border2)}
+.kanban-card-title{font-size:13px;font-weight:500;color:var(--text)}
+.kanban-card-meta{font-size:11px;color:var(--text3);margin-top:4px}
+/* Relationship graph placeholder */
+.graph-container{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);height:400px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+/* Notes */
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:14px;cursor:pointer;transition:all 0.15s;position:relative}
+.note-card:hover{border-color:var(--border2)}
+.note-card.pinned{border-color:var(--gold);border-width:1px}
+.note-pin{position:absolute;top:10px;right:10px;color:var(--gold);font-size:14px}
+/* World builder tabs */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab-item{padding:8px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text3);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s}
+.tab-item:hover{color:var(--text)}
+.tab-item.active{color:var(--accent2);border-bottom-color:var(--accent)}
+/* Empty state */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text3)}
+.empty-icon{font-size:48px;margin-bottom:16px;opacity:0.4}
+.empty-title{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.empty-desc{font-size:13px;line-height:1.5}
+/* Activity feed */
+.activity-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.activity-icon{width:28px;height:28px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.activity-text{font-size:12px;color:var(--text2);line-height:1.4}
+.activity-time{font-size:11px;color:var(--text3);margin-top:2px}
+/* Alerts */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:10px;z-index:999;font-size:13px;animation:slideUp 0.2s;max-width:320px}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast-success{border-color:var(--success)}
+.toast-error{border-color:var(--danger)}
+/* Arc tracker */
+.arc-timeline{display:flex;gap:0;overflow-x:auto;padding-bottom:8px}
+.arc-step{flex:0 0 120px;padding:12px;background:var(--surface);border:1px solid var(--border);border-right:none;position:relative;cursor:pointer;transition:background 0.15s}
+.arc-step:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+.arc-step:last-child{border-radius:0 var(--radius) var(--radius) 0;border-right:1px solid var(--border)}
+.arc-step:hover{background:var(--surface2)}
+.arc-step.active{background:rgba(124,106,247,0.15);border-color:var(--accent)}
+.arc-book{font-size:10px;color:var(--text3);margin-bottom:4px}
+.arc-label{font-size:12px;font-weight:600;color:var(--text)}
+/* Divider */
+.divider{height:1px;background:var(--border);margin:20px 0}
+/* Scrollable content wrapper */
+.scroll-content{flex:1;overflow-y:auto;padding:24px}
+/* Floating action */
+.fab{position:fixed;bottom:24px;right:24px;width:48px;height:48px;border-radius:50%;background:var(--accent);border:none;color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(124,106,247,0.4);transition:all 0.2s;z-index:50}
+.fab:hover{background:var(--accent3);transform:scale(1.05)}
+/* Status badges */
+.badge{display:inline-flex;align-items:center;padding:3px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-draft{background:rgba(232,184,109,0.2);color:var(--gold2)}
+.badge-completed{background:rgba(78,201,160,0.2);color:var(--success)}
+.badge-outline{background:rgba(160,156,192,0.15);color:var(--text2)}
+.badge-revision{background:rgba(244,140,114,0.2);color:var(--coral)}
+/* Settings */
+.settings-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;margin-bottom:16px}
+.settings-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.settings-row:last-child{border-bottom:none}
+.settings-label{font-size:13px;color:var(--text)}
+.settings-desc{font-size:11px;color:var(--text3);margin-top:2px}
+/* Toggle */
+.toggle{position:relative;display:inline-block;width:36px;height:20px}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;inset:0;background:var(--bg3);border-radius:10px;transition:0.2s;cursor:pointer;border:1px solid var(--border2)}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:0.2s}
+.toggle input:checked+.toggle-slider::before{transform:translateX(16px)}
+/* Responsive */
+@media(max-width:768px){
+  :root{--sidebar-w:56px}
+  #sidebar .nav-label,.sidebar-label,.logo-text{display:none}
+  #sidebar .logo-icon{margin:0 auto}
+  #editor-area{padding:24px 20px}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">✦</div>
+      <div class="logo-text">Dream Story<br><span class="logo-sub">Universe Studio</span></div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
+    </div>
+    <div class="sidebar-scroll">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Workspace</div>
+        <button class="nav-item active" onclick="nav('dashboard')">
+          <span class="nav-icon">⊞</span><span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="nav('projects')">
+          <span class="nav-icon">◈</span><span class="nav-label">Projects</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Story</div>
+        <button class="nav-item" onclick="nav('books')">
+          <span class="nav-icon">📚</span><span class="nav-label">Books</span>
+        </button>
+        <button class="nav-item" onclick="nav('chapters')">
+          <span class="nav-icon">📝</span><span class="nav-label">Write</span>
+        </button>
+        <button class="nav-item" onclick="nav('planning')">
+          <span class="nav-icon">◰</span><span class="nav-label">Planning</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Universe</div>
+        <button class="nav-item" onclick="nav('characters')">
+          <span class="nav-icon">👤</span><span class="nav-label">Characters</span>
+        </button>
+        <button class="nav-item" onclick="nav('timeline')">
+          <span class="nav-icon">⏱</span><span class="nav-label">Timeline</span>
+        </button>
+        <button class="nav-item" onclick="nav('world')">
+          <span class="nav-icon">🌍</span><span class="nav-label">World</span>
+        </button>
+        <button class="nav-item" onclick="nav('relationships')">
+          <span class="nav-icon">◉</span><span class="nav-label">Connections</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <button class="nav-item" onclick="nav('notes')">
+          <span class="nav-icon">🗒</span><span class="nav-label">Notes</span>
+        </button>
+        <button class="nav-item" onclick="nav('search')">
+          <span class="nav-icon">🔍</span><span class="nav-label">Search</span>
+        </button>
+        <button class="nav-item" onclick="nav('stats')">
+          <span class="nav-icon">📊</span><span class="nav-label">Statistics</span>
+        </button>
+        <button class="nav-item" onclick="nav('export')">
+          <span class="nav-icon">⬆</span><span class="nav-label">Export / Import</span>
+        </button>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="nav('settings')">
+        <span class="nav-icon">⚙</span><span class="nav-label">Settings</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <div id="main">
+    <div id="topbar">
+      <div>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-breadcrumb" id="page-breadcrumb">Dream Story Universe Studio</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-bar" id="global-search-bar" style="display:none">
+          <span style="color:var(--text3);font-size:14px">🔍</span>
+          <input type="text" placeholder="Search everything..." id="global-search-input" oninput="globalSearch(this.value)">
+        </div>
+        <div id="last-saved" style="font-size:11px;color:var(--text3)">Not saved yet</div>
+        <button class="btn btn-sm" onclick="manualBackup()">💾 Backup</button>
+        <button class="btn btn-primary btn-sm" id="topbar-action-btn" onclick="topbarAction()">+ New</button>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<div id="modal-container"></div>
+<div id="toast-container"></div>
+
+<script>
+// ============================================================
+// DATABASE - IndexedDB
+// ============================================================
+const DB_NAME = 'DreamStoryStudio';
+const DB_VERSION = 1;
+let db;
+
+function initDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const d = e.target.result;
+      ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships','backups','settings'].forEach(store => {
+        if (!d.objectStoreNames.contains(store)) {
+          d.createObjectStore(store, {keyPath:'id'});
+        }
+      });
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbGet(store, id) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readonly');
+    const req = id ? tx.objectStore(store).get(id) : tx.objectStore(store).getAll();
+    req.onsuccess = () => res(req.result);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+function dbPut(store, obj) {
+  return new Promise((res, rej) => {
+    if (!obj.id) obj.id = crypto.randomUUID();
+    obj.updatedAt = Date.now();
+    if (!obj.createdAt) obj.createdAt = Date.now();
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).put(obj);
+    req.onsuccess = () => res(obj);
+    req.onerror = () => rej(req.error);
+  });
+}
+
+function dbDelete(store, id) {
+  return new Promise((res, rej) => {
+    const tx = db.transaction(store, 'readwrite');
+    const req = tx.objectStore(store).delete(id);
+    req.onsuccess = () => res();
+    req.onerror = () => rej(req.error);
+  });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+const state = {
+  currentPage: 'dashboard',
+  currentProject: null,
+  currentBook: null,
+  currentChapter: null,
+  sidebarCollapsed: false,
+  settings: { theme: 'dark', autosave: true, editorFont: 'default' },
+  autosaveTimer: null,
+  lastSaved: null
+};
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function nav(page) {
+  state.currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => {
+    if (el.getAttribute('onclick') === `nav('${page}')`) el.classList.add('active');
+  });
+
+  const titles = {
+    dashboard:'Dashboard', projects:'Projects', books:'Books', chapters:'Write',
+    planning:'Story Planning', characters:'Characters', timeline:'Timeline',
+    world:'World Building', relationships:'Connections', notes:'Notes',
+    search:'Search', stats:'Statistics', export:'Export / Import', settings:'Settings'
+  };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  document.getElementById('page-breadcrumb').textContent = 'Dream Story Universe Studio';
+  document.getElementById('global-search-bar').style.display = page === 'search' ? 'flex' : 'none';
+
+  const actionLabels = {
+    projects:'+ New Project', books:'+ New Book', chapters:'+ Chapter',
+    characters:'+ New Character', timeline:'+ New Event', world:'+ Add Item',
+    notes:'+ New Note', planning:'+ New Card'
+  };
+  document.getElementById('topbar-action-btn').textContent = actionLabels[page] || '+ New';
+
+  renderPage(page);
+}
+
+function topbarAction() {
+  const actions = {
+    projects: showNewProjectModal,
+    books: showNewBookModal,
+    chapters: showNewChapterModal,
+    characters: showNewCharacterModal,
+    timeline: showNewEventModal,
+    notes: showNewNoteModal,
+    world: showNewWorldItemModal,
+    planning: showNewPlanningCard
+  };
+  if (actions[state.currentPage]) actions[state.currentPage]();
+}
+
+function toggleSidebar() {
+  state.sidebarCollapsed = !state.sidebarCollapsed;
+  document.getElementById('sidebar').classList.toggle('collapsed', state.sidebarCollapsed);
+}
+
+// ============================================================
+// RENDER ROUTER
+// ============================================================
+async function renderPage(page) {
+  const content = document.getElementById('content');
+  content.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:var(--text3)">Loading...</div>';
+  const renderers = {
+    dashboard: renderDashboard,
+    projects: renderProjects,
+    books: renderBooks,
+    chapters: renderChapters,
+    characters: renderCharacters,
+    timeline: renderTimeline,
+    world: renderWorld,
+    relationships: renderRelationships,
+    notes: renderNotes,
+    search: renderSearch,
+    stats: renderStats,
+    export: renderExport,
+    planning: renderPlanning,
+    settings: renderSettings
+  };
+  if (renderers[page]) await renderers[page]();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function renderDashboard() {
+  const [projects, books, chapters, characters, timeline, locations, organizations, notes] = await Promise.all([
+    dbGet('projects'), dbGet('books'), dbGet('chapters'), dbGet('characters'),
+    dbGet('timeline'), dbGet('locations'), dbGet('organizations'), dbGet('notes')
+  ]);
+
+  const totalWords = chapters.reduce((s, c) => s + wordCount(c.content || ''), 0);
+  const recentActivity = [...books, ...chapters, ...characters].sort((a,b)=>b.updatedAt-a.updatedAt).slice(0, 8);
+
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:1100px">
+      <div style="margin-bottom:24px">
+        <h1 style="font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px">Welcome to your Universe ✦</h1>
+        <p style="color:var(--text3);font-size:13px">Your story universe at a glance</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">${projects.length}</div><div class="stat-label">Projects</div></div>
+        <div class="stat-card"><div class="stat-num">${books.length}</div><div class="stat-label">Books</div></div>
+        <div class="stat-card"><div class="stat-num">${chapters.length}</div><div class="stat-label">Chapters</div></div>
+        <div class="stat-card"><div class="stat-num">${characters.length}</div><div class="stat-label">Characters</div></div>
+        <div class="stat-card"><div class="stat-num">${timeline.length}</div><div class="stat-label">Timeline Events</div></div>
+        <div class="stat-card"><div class="stat-num">${locations.length}</div><div class="stat-label">Locations</div></div>
+        <div class="stat-card"><div class="stat-num">${organizations.length}</div><div class="stat-label">Organizations</div></div>
+        <div class="stat-card"><div class="stat-num">${fmtNum(totalWords)}</div><div class="stat-label">Words Written</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
+        <div>
+          <div class="section-header">
+            <div><div class="section-title">Recent Activity</div></div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:4px 16px">
+            ${recentActivity.length === 0 ? '<p style="color:var(--text3);font-size:13px;padding:20px 0;text-align:center">No activity yet. Start by creating a project.</p>' :
+              recentActivity.map(item => `
+                <div class="activity-item">
+                  <div class="activity-icon">${item.title ? '📚' : item.name ? '👤' : '📝'}</div>
+                  <div>
+                    <div class="activity-text">${sanitize(item.title || item.name || 'Untitled')}</div>
+                    <div class="activity-time">${timeAgo(item.updatedAt)}</div>
+                  </div>
+                </div>
+              `).join('')}
+          </div>
+        </div>
+
+        <div>
+          <div class="section-header">
+            <div><div class="section-title">Quick Access</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${[
+              {icon:'✍️',label:'Start Writing',action:"nav('chapters')"},
+              {icon:'👤',label:'Add Character',action:"showNewCharacterModal()"},
+              {icon:'⏱',label:'Log Event',action:"nav('timeline')"},
+              {icon:'🌍',label:'Build World',action:"nav('world')"},
+              {icon:'📊',label:'View Stats',action:"nav('stats')"},
+              {icon:'🗒',label:'Quick Note',action:"nav('notes')"},
+            ].map(q=>`
+              <button class="card" style="text-align:left;cursor:pointer" onclick="${q.action}">
+                <div style="font-size:22px;margin-bottom:6px">${q.icon}</div>
+                <div style="font-size:13px;font-weight:600;color:var(--text)">${q.label}</div>
+              </button>
+            `).join('')}
+          </div>
+
+          <div style="margin-top:16px">
+            <div class="section-header"><div class="section-title">Writing Progress</div></div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px">
+              ${books.length === 0 ? '<p style="color:var(--text3);font-size:12px;text-align:center">Create a book to track progress</p>' :
+                books.slice(0,4).map(b => {
+                  const bChaps = chapters.filter(c=>c.bookId===b.id);
+                  const bWords = bChaps.reduce((s,c)=>s+wordCount(c.content||''),0);
+                  const target = b.targetWords || 80000;
+                  const pct = Math.min(100, Math.round(bWords/target*100));
+                  return `
+                    <div style="margin-bottom:12px">
+                      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:4px">
+                        <span>${sanitize(b.title)}</span>
+                        <span>${pct}%</span>
+                      </div>
+                      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+                    </div>
+                  `;
+                }).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// PROJECTS
+// ============================================================
+async function renderProjects() {
+  const projects = await dbGet('projects');
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-header">
+        <div><div class="section-title">All Projects</div><div class="section-sub">${projects.length} project${projects.length!==1?'s':''}</div></div>
+        <button class="btn btn-primary" onclick="showNewProjectModal()">+ New Project</button>
+      </div>
+      ${projects.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">◈</div>
+          <div class="empty-title">No projects yet</div>
+          <div class="empty-desc">Create your first story universe project to get started.</div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="showNewProjectModal()">+ New Project</button>
+        </div>
+      ` : `<div class="card-grid">${projects.map(p=>`
+        <div class="card" onclick="selectProject('${p.id}')">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div style="font-size:24px;margin-bottom:8px">${p.emoji || '✦'}</div>
+            <span class="badge badge-${p.status||'draft'}">${p.status||'Draft'}</span>
+          </div>
+          <div class="card-title">${sanitize(p.name)}</div>
+          ${p.subtitle ? `<div class="card-meta">${sanitize(p.subtitle)}</div>` : ''}
+          <div class="card-desc">${sanitize(p.description||'')}</div>
+          <div style="display:flex;gap:6px;margin-top:12px">
+            <span class="tag tag-accent">${p.genre||'Fiction'}</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-sm" onclick="event.stopPropagation();editProject('${p.id}')">Edit</button>
+            <button class="btn btn-sm" onclick="event.stopPropagation();deleteItem('projects','${p.id}','Project',renderProjects)">Delete</button>
+          </div>
+        </div>
+      `).join('')}</div>`}
+    </div>
+  `;
+}
+
+async function selectProject(id) {
+  const project = await dbGet('projects', id);
+  state.currentProject = project;
+  toast(`Switched to: ${project.name}`,'success');
+  nav('books');
+}
+
+function showNewProjectModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Project</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Project Name *</label>
+          <input class="form-input" id="f-name" placeholder="My Epic Novel" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subtitle</label>
+          <input class="form-input" id="f-subtitle" placeholder="A Story of..." />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="Describe your story universe..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Genre</label>
+          <select class="form-select" id="f-genre">
+            <option>Fantasy</option><option>Science Fiction</option><option>Mystery</option>
+            <option>Romance</option><option>Thriller</option><option>Historical Fiction</option>
+            <option>Literary Fiction</option><option>Horror</option><option>Adventure</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="f-status">
+            <option>Planning</option><option>Writing</option><option>Editing</option><option>Completed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Emoji / Symbol</label>
+        <input class="form-input" id="f-emoji" placeholder="✦" maxlength="2" style="width:80px" />
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewProject()">Create Project</button>
+    </div>
+  `);
+}
+
+async function saveNewProject() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Project name is required','error'); return; }
+  const p = await dbPut('projects', {
+    name, subtitle: v('f-subtitle'), description: v('f-desc'),
+    genre: v('f-genre'), status: v('f-status'), emoji: v('f-emoji') || '✦'
+  });
+  closeModal(); toast('Project created!','success');
+  state.currentProject = p;
+  renderProjects();
+}
+
+async function editProject(id) {
+  const p = await dbGet('projects', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Project</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Project Name</label>
+        <input class="form-input" id="f-name" value="${sanitize(p.name)}" /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc">${sanitize(p.description||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Genre</label>
+        <input class="form-input" id="f-genre" value="${sanitize(p.genre||'')}" /></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateProject('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateProject(id) {
+  const p = await dbGet('projects', id);
+  p.name = v('f-name'); p.description = v('f-desc'); p.genre = v('f-genre');
+  await dbPut('projects', p); closeModal(); toast('Saved!','success'); renderProjects();
+}
+
+// ============================================================
+// BOOKS
+// ============================================================
+async function renderBooks() {
+  const books = await dbGet('books');
+  const filtered = state.currentProject ? books.filter(b=>b.projectId===state.currentProject.id) : books;
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Books${state.currentProject ? ` — ${sanitize(state.currentProject.name)}` : ''}</div>
+          <div class="section-sub">${filtered.length} book${filtered.length!==1?'s':''}</div>
+        </div>
+        <button class="btn btn-primary" onclick="showNewBookModal()">+ New Book</button>
+      </div>
+      ${filtered.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <div class="empty-title">No books yet</div>
+          <div class="empty-desc">Add your first book to this universe.</div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="showNewBookModal()">+ New Book</button>
+        </div>
+      ` : `<div class="card-grid">${filtered.map(b=>`
+        <div class="card" onclick="selectBook('${b.id}')">
+          <div style="height:80px;background:linear-gradient(135deg,${bookColor(b.id)}30,${bookColor(b.id)}10);border-radius:var(--radius);margin-bottom:12px;display:flex;align-items:center;justify-content:center;font-size:32px">📖</div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between">
+            <div class="card-title">${sanitize(b.title)}</div>
+            <span class="badge badge-${b.status||'draft'}">${b.status||'Draft'}</span>
+          </div>
+          ${b.subtitle ? `<div class="card-meta">${sanitize(b.subtitle)}</div>` : ''}
+          <div class="card-desc">${sanitize(b.description||'')}</div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${bookProgress(b)}%"></div></div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <button class="btn btn-sm" onclick="event.stopPropagation();selectBook('${b.id}')">Write ✍</button>
+            <button class="btn btn-sm" onclick="event.stopPropagation();editBook('${b.id}')">Edit</button>
+            <button class="btn btn-sm" onclick="event.stopPropagation();deleteItem('books','${b.id}','Book',renderBooks)">✕</button>
+          </div>
+        </div>
+      `).join('')}</div>`}
+    </div>
+  `;
+}
+
+function bookProgress(b) {
+  return Math.min(100, Math.round(((b.wordCount||0) / (b.targetWords||80000)) * 100));
+}
+
+function bookColor(id) {
+  const colors = ['#7c6af7','#e8b86d','#4ec9b0','#f48c72','#d47ab0','#5b8af7','#a8e06d'];
+  let h = 0; for (const c of id) h = c.charCodeAt(0) + h * 31;
+  return colors[Math.abs(h) % colors.length];
+}
+
+async function selectBook(id) {
+  const book = await dbGet('books', id);
+  state.currentBook = book;
+  nav('chapters');
+}
+
+function showNewBookModal() {
+  const projects = dbGet('projects');
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Book</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Book Title *</label>
+        <input class="form-input" id="f-title" placeholder="The Beginning..." /></div>
+      <div class="form-group"><label class="form-label">Subtitle</label>
+        <input class="form-input" id="f-subtitle" placeholder="Book One of..." /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="What happens in this book?"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="f-status">
+            <option>Planning</option><option>Drafting</option><option>Editing</option><option>Completed</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Target Word Count</label>
+          <input class="form-input" id="f-target" type="number" placeholder="80000" /></div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewBook()">Create Book</button>
+    </div>
+  `);
+}
+
+async function saveNewBook() {
+  const title = v('f-title');
+  if (!title) { toast('Title required','error'); return; }
+  const b = await dbPut('books', {
+    title, subtitle: v('f-subtitle'), description: v('f-desc'),
+    status: v('f-status'), targetWords: parseInt(v('f-target')) || 80000,
+    projectId: state.currentProject?.id || null, wordCount: 0
+  });
+  closeModal(); toast('Book created!','success'); renderBooks();
+}
+
+async function editBook(id) {
+  const b = await dbGet('books', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Book</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="f-title" value="${sanitize(b.title)}" /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc">${sanitize(b.description||'')}</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="f-status">
+            ${['Planning','Drafting','Editing','Completed'].map(s=>`<option${b.status===s?' selected':''}>${s}</option>`).join('')}
+          </select></div>
+        <div class="form-group"><label class="form-label">Target Words</label>
+          <input class="form-input" id="f-target" type="number" value="${b.targetWords||80000}" /></div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateBook('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateBook(id) {
+  const b = await dbGet('books', id);
+  b.title=v('f-title'); b.description=v('f-desc'); b.status=v('f-status');
+  b.targetWords=parseInt(v('f-target'))||80000;
+  await dbPut('books', b); closeModal(); toast('Saved!','success'); renderBooks();
+}
+
+// ============================================================
+// CHAPTERS / WRITING
+// ============================================================
+async function renderChapters() {
+  const allChapters = await dbGet('chapters');
+  const chapters = state.currentBook ? allChapters.filter(c=>c.bookId===state.currentBook.id) : allChapters;
+
+  if (chapters.length > 0 && !state.currentChapter) {
+    state.currentChapter = chapters[0];
+  }
+
+  const content = document.getElementById('content');
+  content.style.padding = '0';
+  content.innerHTML = `
+    <div id="editor-container" style="height:100%;display:flex">
+      <div id="editor-sidebar">
+        <div style="padding:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:12px;font-weight:600;color:var(--text2)">${state.currentBook ? sanitize(state.currentBook.title) : 'All Chapters'}</div>
+          <button class="btn btn-sm btn-primary" onclick="showNewChapterModal()">+</button>
+        </div>
+        <div id="chapter-list">
+          ${chapters.length === 0 ? '<p style="color:var(--text3);font-size:12px;padding:16px;text-align:center">No chapters yet</p>' :
+            chapters.map(c=>`
+              <div class="chapter-item${state.currentChapter?.id===c.id?' active':''}" onclick="selectChapter('${c.id}')">
+                <div class="chapter-status status-${c.status||'outline'}"></div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${sanitize(c.title||'Untitled')}</div>
+                  <div style="font-size:10px;color:var(--text3)">${wordCount(c.content||'')} words</div>
+                </div>
+              </div>
+            `).join('')}
+        </div>
+      </div>
+      <div id="editor-main">
+        ${state.currentChapter ? renderEditorPanel(state.currentChapter) : `
+          <div class="empty-state" style="margin-top:60px">
+            <div class="empty-icon">✍️</div>
+            <div class="empty-title">No chapter selected</div>
+            <div class="empty-desc">Create a chapter to start writing.</div>
+            <button class="btn btn-primary" style="margin-top:16px" onclick="showNewChapterModal()">+ New Chapter</button>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+
+  // Reset padding
+  content.style.padding = '0';
+}
+
+function renderEditorPanel(chapter) {
+  return `
+    <div class="editor-toolbar">
+      <button class="toolbar-btn" onclick="formatText('bold')" title="Bold"><b>B</b></button>
+      <button class="toolbar-btn" onclick="formatText('italic')" title="Italic"><i>I</i></button>
+      <button class="toolbar-btn" onclick="formatText('underline')" title="Underline"><u>U</u></button>
+      <div class="toolbar-sep"></div>
+      <button class="toolbar-btn" onclick="insertText('\\n\\n')" title="Paragraph">¶</button>
+      <div class="toolbar-sep"></div>
+      <select class="form-select" id="chapter-status-sel" style="font-size:11px;padding:3px 8px;width:auto" onchange="updateChapterStatus()">
+        ${['outline','draft','revision','completed'].map(s=>`<option value="${s}"${chapter.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+      <div class="toolbar-sep"></div>
+      <button class="toolbar-btn" onclick="toggleFocusMode()" title="Focus Mode">⛶</button>
+      <button class="toolbar-btn" onclick="editChapterDetails('${chapter.id}')" title="Chapter Settings">⚙</button>
+      <button class="toolbar-btn" onclick="deleteItem('chapters','${chapter.id}','Chapter',()=>{ state.currentChapter=null; renderChapters(); })" title="Delete Chapter" style="color:var(--danger)">🗑</button>
+    </div>
+    <div id="editor-area">
+      <input class="editor-title" id="chapter-title-input" value="${sanitize(chapter.title||'')}" 
+        placeholder="Chapter Title..." onchange="saveChapterTitle()" />
+      <textarea class="editor-content" id="chapter-content-area"
+        placeholder="Begin your story here..."
+        onkeydown="scheduleAutosave()"
+        oninput="updateWordCount()">${chapter.content||''}</textarea>
+    </div>
+    <div class="editor-meta">
+      <span id="word-count-display">${wordCount(chapter.content||'')} words</span>
+      <span>${charCount(chapter.content||'')} chars</span>
+      <span id="reading-time">${readingTime(chapter.content||'')} min read</span>
+      <span id="autosave-status" style="margin-left:auto;color:var(--success)">✓ Saved</span>
+    </div>
+  `;
+}
+
+async function selectChapter(id) {
+  if (state.currentChapter) await saveCurrentChapter();
+  const allChapters = await dbGet('chapters');
+  state.currentChapter = allChapters.find(c=>c.id===id);
+  const editorMain = document.getElementById('editor-main');
+  if (editorMain) {
+    editorMain.innerHTML = renderEditorPanel(state.currentChapter);
+  }
+  document.querySelectorAll('.chapter-item').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.chapter-item').forEach(el=>{
+    if(el.getAttribute('onclick')===`selectChapter('${id}')`) el.classList.add('active');
+  });
+}
+
+async function saveCurrentChapter() {
+  if (!state.currentChapter) return;
+  const titleEl = document.getElementById('chapter-title-input');
+  const contentEl = document.getElementById('chapter-content-area');
+  if (!titleEl || !contentEl) return;
+  state.currentChapter.title = titleEl.value;
+  state.currentChapter.content = contentEl.value;
+  await dbPut('chapters', state.currentChapter);
+  updateLastSaved();
+}
+
+async function saveChapterTitle() {
+  const titleEl = document.getElementById('chapter-title-input');
+  if (titleEl && state.currentChapter) {
+    state.currentChapter.title = titleEl.value;
+    await dbPut('chapters', state.currentChapter);
+  }
+}
+
+function scheduleAutosave() {
+  const el = document.getElementById('autosave-status');
+  if (el) el.textContent = '● Unsaved';
+  clearTimeout(state.autosaveTimer);
+  state.autosaveTimer = setTimeout(async () => {
+    await saveCurrentChapter();
+    if (el) el.textContent = '✓ Saved';
+  }, 2000);
+}
+
+function updateWordCount() {
+  const content = document.getElementById('chapter-content-area')?.value || '';
+  const wc = document.getElementById('word-count-display');
+  const rt = document.getElementById('reading-time');
+  if(wc) wc.textContent = `${wordCount(content)} words`;
+  if(rt) rt.textContent = `${readingTime(content)} min read`;
+}
+
+async function updateChapterStatus() {
+  const sel = document.getElementById('chapter-status-sel');
+  if (sel && state.currentChapter) {
+    state.currentChapter.status = sel.value;
+    await dbPut('chapters', state.currentChapter);
+  }
+}
+
+function toggleFocusMode() {
+  document.getElementById('editor-area')?.classList.toggle('focus-mode');
+}
+
+function formatText(cmd) {
+  document.execCommand(cmd, false, null);
+}
+
+function insertText(text) {
+  const ta = document.getElementById('chapter-content-area');
+  if (!ta) return;
+  const start = ta.selectionStart;
+  ta.value = ta.value.slice(0, start) + text + ta.value.slice(ta.selectionEnd);
+  ta.selectionStart = ta.selectionEnd = start + text.length;
+}
+
+function showNewChapterModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Chapter</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Chapter Title *</label>
+        <input class="form-input" id="f-title" placeholder="Chapter 1: The Beginning" /></div>
+      <div class="form-group"><label class="form-label">Status</label>
+        <select class="form-select" id="f-status">
+          <option value="outline">Outline</option><option value="draft">Draft</option>
+          <option value="revision">Revision</option><option value="completed">Completed</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Chapter Notes</label>
+        <textarea class="form-textarea" id="f-notes" placeholder="Notes about this chapter..."></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewChapter()">Create Chapter</button>
+    </div>
+  `);
+}
+
+async function saveNewChapter() {
+  const title = v('f-title');
+  if (!title) { toast('Title required','error'); return; }
+  const c = await dbPut('chapters', {
+    title, status: v('f-status'), notes: v('f-notes'),
+    bookId: state.currentBook?.id || null, content: ''
+  });
+  closeModal();
+  state.currentChapter = c;
+  toast('Chapter created!','success');
+  renderChapters();
+}
+
+async function editChapterDetails(id) {
+  const c = await dbGet('chapters', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Chapter Settings</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="f-title" value="${sanitize(c.title||'')}" /></div>
+      <div class="form-group"><label class="form-label">Notes</label>
+        <textarea class="form-textarea" id="f-notes">${sanitize(c.notes||'')}</textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateChapter('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateChapter(id) {
+  const c = await dbGet('chapters', id);
+  c.title=v('f-title'); c.notes=v('f-notes');
+  await dbPut('chapters',c); closeModal(); toast('Saved!','success');
+  if(state.currentChapter?.id===id) state.currentChapter=c;
+  renderChapters();
+}
+
+// ============================================================
+// CHARACTERS
+// ============================================================
+async function renderCharacters() {
+  const characters = await dbGet('characters');
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:1100px">
+      <div class="section-header">
+        <div><div class="section-title">Characters</div><div class="section-sub">${characters.length} character${characters.length!==1?'s':''}</div></div>
+        <button class="btn btn-primary" onclick="showNewCharacterModal()">+ New Character</button>
+      </div>
+      ${characters.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">👤</div>
+          <div class="empty-title">No characters yet</div>
+          <div class="empty-desc">Populate your universe with memorable characters.</div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="showNewCharacterModal()">+ New Character</button>
+        </div>
+      ` : `<div class="card-grid">${characters.map(c=>`
+        <div class="char-card" onclick="viewCharacter('${c.id}')">
+          <div class="char-avatar">
+            <div class="char-avatar-initial">${(c.name||'?').charAt(0).toUpperCase()}</div>
+          </div>
+          <div class="char-info">
+            <div class="char-name">${sanitize(c.name||'Unnamed')}</div>
+            <div class="char-role">${sanitize(c.nickname||'')}${c.age?` · Age ${c.age}`:''}</div>
+            <div class="card-tags" style="margin-top:8px">
+              ${(c.tags||[]).map(t=>`<span class="tag tag-${tagColor(t)}">${t}</span>`).join('')}
+            </div>
+            <div style="display:flex;gap:6px;margin-top:10px">
+              <button class="btn btn-sm" onclick="event.stopPropagation();editCharacter('${c.id}')">Edit</button>
+              <button class="btn btn-sm" onclick="event.stopPropagation();deleteItem('characters','${c.id}','Character',renderCharacters)">✕</button>
+            </div>
+          </div>
+        </div>
+      `).join('')}</div>`}
+    </div>
+  `;
+}
+
+function tagColor(tag) {
+  const map = {'Hero':'teal','Villain':'coral','Protagonist':'accent','Antagonist':'coral','Supporting':'gold','Side Character':'gold','Mentor':'pink'};
+  return map[tag] || 'accent';
+}
+
+async function viewCharacter(id) {
+  const c = await dbGet('characters', id);
+  const books = await dbGet('books');
+  showModal(`
+    <div class="panel-header">
+      <div style="display:flex;align-items:center;gap:14px;flex:1">
+        <div class="char-avatar-initial" style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--pink));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;flex-shrink:0">${(c.name||'?').charAt(0).toUpperCase()}</div>
+        <div>
+          <div class="panel-title">${sanitize(c.name||'Unnamed')}</div>
+          <div style="font-size:12px;color:var(--text3)">${(c.tags||[]).join(' · ')}</div>
+        </div>
+      </div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <div class="form-label" style="margin-bottom:8px">Basic Info</div>
+          ${infoRow('Nickname', c.nickname)} ${infoRow('Alias', c.alias)}
+          ${infoRow('Age', c.age)} ${infoRow('Gender', c.gender)}
+          ${infoRow('Height', c.height)} ${infoRow('Weight', c.weight)}
+        </div>
+        <div>
+          <div class="form-label" style="margin-bottom:8px">Appearance</div>
+          ${infoRow('Hair', c.hair)} ${infoRow('Eyes', c.eyes)}
+          ${infoRow('Skin Tone', c.skinTone)} ${infoRow('Clothing', c.clothing)}
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        ${[['Strengths',c.strengths],['Weaknesses',c.weaknesses],['Fears',c.fears],['Goals',c.goals],['Motivation',c.motivation],['Fighting Style',c.fightingStyle]].map(([l,v])=>v?`
+          <div>
+            <div class="form-label">${l}</div>
+            <div style="font-size:13px;color:var(--text2)">${sanitize(v)}</div>
+          </div>
+        `:'').join('')}
+      </div>
+      ${c.backstory ? `
+        <div class="divider"></div>
+        <div class="form-label">Backstory</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">${sanitize(c.backstory)}</div>
+      ` : ''}
+      ${c.currentArc ? `
+        <div class="divider"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          ${infoBlock('Current Arc', c.currentArc)}${infoBlock('Future Arc', c.futureArc)}
+        </div>
+      ` : ''}
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="closeModal();editCharacter('${c.id}')">Edit</button>
+    </div>
+  `,'panel-lg');
+}
+
+function infoRow(label, value) {
+  if (!value) return '';
+  return `<div style="display:flex;gap:8px;margin-bottom:6px;font-size:12px"><span style="color:var(--text3);min-width:80px">${label}</span><span style="color:var(--text)">${sanitize(value)}</span></div>`;
+}
+
+function infoBlock(label, value) {
+  if (!value) return '';
+  return `<div><div class="form-label">${label}</div><div style="font-size:13px;color:var(--text2)">${sanitize(value)}</div></div>`;
+}
+
+function showNewCharacterModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Character</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="tab-bar">
+        <div class="tab-item active" onclick="charTab(this,'basic')">Basic</div>
+        <div class="tab-item" onclick="charTab(this,'appearance')">Appearance</div>
+        <div class="tab-item" onclick="charTab(this,'personality')">Personality</div>
+        <div class="tab-item" onclick="charTab(this,'story')">Story</div>
+      </div>
+      <div id="char-tab-basic">
+        <div class="form-row"><div class="form-group"><label class="form-label">Full Name *</label>
+          <input class="form-input" id="f-name" placeholder="Character Name" /></div>
+          <div class="form-group"><label class="form-label">Nickname</label>
+          <input class="form-input" id="f-nickname" placeholder="Nickname" /></div></div>
+        <div class="form-row3">
+          <div class="form-group"><label class="form-label">Age</label><input class="form-input" id="f-age" type="number" /></div>
+          <div class="form-group"><label class="form-label">Gender</label><input class="form-input" id="f-gender" /></div>
+          <div class="form-group"><label class="form-label">Alias</label><input class="form-input" id="f-alias" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Height</label><input class="form-input" id="f-height" placeholder="6'2&quot;" /></div>
+          <div class="form-group"><label class="form-label">Weight</label><input class="form-input" id="f-weight" placeholder="180 lbs" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Role Tags</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px">
+            ${['Hero','Villain','Protagonist','Antagonist','Supporting','Mentor','Side Character'].map(t=>
+              `<label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+                <input type="checkbox" value="${t}" class="char-tag-cb"> ${t}</label>`
+            ).join('')}
+          </div>
+        </div>
+      </div>
+      <div id="char-tab-appearance" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Hair</label><input class="form-input" id="f-hair" /></div>
+          <div class="form-group"><label class="form-label">Eyes</label><input class="form-input" id="f-eyes" /></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Skin Tone</label><input class="form-input" id="f-skin" /></div>
+          <div class="form-group"><label class="form-label">Clothing Style</label><input class="form-input" id="f-clothing" /></div>
+        </div>
+      </div>
+      <div id="char-tab-personality" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Strengths</label><textarea class="form-textarea" id="f-strengths" style="min-height:60px"></textarea></div>
+          <div class="form-group"><label class="form-label">Weaknesses</label><textarea class="form-textarea" id="f-weaknesses" style="min-height:60px"></textarea></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Fears</label><textarea class="form-textarea" id="f-fears" style="min-height:60px"></textarea></div>
+          <div class="form-group"><label class="form-label">Goals</label><textarea class="form-textarea" id="f-goals" style="min-height:60px"></textarea></div>
+        </div>
+        <div class="form-group"><label class="form-label">Motivation</label><textarea class="form-textarea" id="f-motivation"></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Fighting Style</label><input class="form-input" id="f-fighting" /></div>
+          <div class="form-group"><label class="form-label">Powers / Skills</label><input class="form-input" id="f-powers" /></div>
+        </div>
+      </div>
+      <div id="char-tab-story" style="display:none">
+        <div class="form-group"><label class="form-label">Backstory</label>
+          <textarea class="form-textarea" id="f-backstory" style="min-height:100px" placeholder="Character's history..."></textarea></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Current Arc</label><textarea class="form-textarea" id="f-current-arc" style="min-height:60px"></textarea></div>
+          <div class="form-group"><label class="form-label">Future Arc</label><textarea class="form-textarea" id="f-future-arc" style="min-height:60px"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewCharacter()">Create Character</button>
+    </div>
+  `,'panel-lg');
+}
+
+function charTab(el, tab) {
+  document.querySelectorAll('.tab-item').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['basic','appearance','personality','story'].forEach(t=>{
+    const el2 = document.getElementById(`char-tab-${t}`);
+    if(el2) el2.style.display = t===tab ? '' : 'none';
+  });
+}
+
+async function saveNewCharacter() {
+  const name = v('f-name');
+  if (!name) { toast('Name required','error'); return; }
+  const tags = [...document.querySelectorAll('.char-tag-cb:checked')].map(cb=>cb.value);
+  await dbPut('characters', {
+    name, nickname: v('f-nickname'), alias: v('f-alias'),
+    age: v('f-age'), gender: v('f-gender'), height: v('f-height'), weight: v('f-weight'),
+    hair: v('f-hair'), eyes: v('f-eyes'), skinTone: v('f-skin'), clothing: v('f-clothing'),
+    strengths: v('f-strengths'), weaknesses: v('f-weaknesses'), fears: v('f-fears'),
+    goals: v('f-goals'), motivation: v('f-motivation'), fightingStyle: v('f-fighting'), powers: v('f-powers'),
+    backstory: v('f-backstory'), currentArc: v('f-current-arc'), futureArc: v('f-future-arc'),
+    tags, projectId: state.currentProject?.id || null
+  });
+  closeModal(); toast('Character created!','success'); renderCharacters();
+}
+
+async function editCharacter(id) {
+  const c = await dbGet('characters', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Character</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Name</label>
+          <input class="form-input" id="f-name" value="${sanitize(c.name||'')}" /></div>
+        <div class="form-group"><label class="form-label">Nickname</label>
+          <input class="form-input" id="f-nickname" value="${sanitize(c.nickname||'')}" /></div>
+      </div>
+      <div class="form-row3">
+        <div class="form-group"><label class="form-label">Age</label><input class="form-input" id="f-age" value="${c.age||''}" /></div>
+        <div class="form-group"><label class="form-label">Gender</label><input class="form-input" id="f-gender" value="${sanitize(c.gender||'')}" /></div>
+        <div class="form-group"><label class="form-label">Alias</label><input class="form-input" id="f-alias" value="${sanitize(c.alias||'')}" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Strengths</label><textarea class="form-textarea" id="f-strengths" style="min-height:60px">${sanitize(c.strengths||'')}</textarea></div>
+        <div class="form-group"><label class="form-label">Weaknesses</label><textarea class="form-textarea" id="f-weaknesses" style="min-height:60px">${sanitize(c.weaknesses||'')}</textarea></div>
+      </div>
+      <div class="form-group"><label class="form-label">Backstory</label>
+        <textarea class="form-textarea" id="f-backstory" style="min-height:80px">${sanitize(c.backstory||'')}</textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Current Arc</label>
+          <textarea class="form-textarea" id="f-current-arc" style="min-height:60px">${sanitize(c.currentArc||'')}</textarea></div>
+        <div class="form-group"><label class="form-label">Future Arc</label>
+          <textarea class="form-textarea" id="f-future-arc" style="min-height:60px">${sanitize(c.futureArc||'')}</textarea></div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateCharacter('${id}')">Save</button>
+    </div>
+  `,'panel-lg');
+}
+
+async function updateCharacter(id) {
+  const c = await dbGet('characters', id);
+  c.name=v('f-name'); c.nickname=v('f-nickname'); c.alias=v('f-alias');
+  c.age=v('f-age'); c.gender=v('f-gender');
+  c.strengths=v('f-strengths'); c.weaknesses=v('f-weaknesses');
+  c.backstory=v('f-backstory'); c.currentArc=v('f-current-arc'); c.futureArc=v('f-future-arc');
+  await dbPut('characters',c); closeModal(); toast('Saved!','success'); renderCharacters();
+}
+
+// ============================================================
+// TIMELINE
+// ============================================================
+async function renderTimeline() {
+  const events = await dbGet('timeline');
+  const sorted = events.sort((a,b)=>(a.year||0)-(b.year||0) || (a.month||0)-(b.month||0));
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:900px">
+      <div class="section-header">
+        <div><div class="section-title">Universe Timeline</div><div class="section-sub">${events.length} events</div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-sm" onclick="filterTimeline()">Filter</button>
+          <button class="btn btn-primary" onclick="showNewEventModal()">+ New Event</button>
+        </div>
+      </div>
+      ${events.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">⏱</div>
+          <div class="empty-title">No timeline events yet</div>
+          <div class="empty-desc">Start recording the history of your universe.</div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="showNewEventModal()">+ New Event</button>
+        </div>
+      ` : `
+        <div class="timeline">
+          ${sorted.map(e=>`
+            <div class="timeline-event">
+              <div class="timeline-dot ${e.importance||'medium'}"></div>
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div class="timeline-date">${e.year ? `Year ${e.year}` : ''}${e.month ? `, Month ${e.month}` : ''}${e.day ? `, Day ${e.day}` : ''}</div>
+                  <div style="display:flex;align-items:center;gap:6px">
+                    <span class="tag tag-${e.importance==='high'?'coral':e.importance==='low'?'teal':'gold'}">${e.importance||'medium'}</span>
+                    <button class="btn btn-sm btn-icon" onclick="editEvent('${e.id}')" style="font-size:11px">✎</button>
+                    <button class="btn btn-sm btn-icon" onclick="deleteItem('timeline','${e.id}','Event',renderTimeline)" style="font-size:11px;color:var(--danger)">✕</button>
+                  </div>
+                </div>
+                <div class="timeline-title">${sanitize(e.name)}</div>
+                ${e.description ? `<div class="timeline-desc">${sanitize(e.description)}</div>` : ''}
+                ${e.relatedBooks ? `<div style="margin-top:6px"><span class="tag tag-accent">📚 ${sanitize(e.relatedBooks)}</span></div>` : ''}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function showNewEventModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Timeline Event</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Event Name *</label>
+        <input class="form-input" id="f-name" placeholder="The Great War begins..." /></div>
+      <div class="form-row3">
+        <div class="form-group"><label class="form-label">Year</label>
+          <input class="form-input" id="f-year" type="number" placeholder="1200" /></div>
+        <div class="form-group"><label class="form-label">Month</label>
+          <input class="form-input" id="f-month" type="number" placeholder="3" min="1" max="12" /></div>
+        <div class="form-group"><label class="form-label">Day</label>
+          <input class="form-input" id="f-day" type="number" placeholder="15" min="1" max="31" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="What happened? Why is this significant?"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Importance</label>
+          <select class="form-select" id="f-importance">
+            <option value="high">High — World-changing</option>
+            <option value="medium" selected>Medium — Significant</option>
+            <option value="low">Low — Minor</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Related Books</label>
+          <input class="form-input" id="f-books" placeholder="Book 1, Book 3..." /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Related Characters</label>
+        <input class="form-input" id="f-chars" placeholder="Character names..." /></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewEvent()">Add Event</button>
+    </div>
+  `);
+}
+
+async function saveNewEvent() {
+  const name = v('f-name');
+  if (!name) { toast('Event name required','error'); return; }
+  await dbPut('timeline', {
+    name, year: parseInt(v('f-year'))||null, month: parseInt(v('f-month'))||null,
+    day: parseInt(v('f-day'))||null, description: v('f-desc'),
+    importance: v('f-importance'), relatedBooks: v('f-books'),
+    relatedChars: v('f-chars'), projectId: state.currentProject?.id||null
+  });
+  closeModal(); toast('Event added!','success'); renderTimeline();
+}
+
+async function editEvent(id) {
+  const e = await dbGet('timeline', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Event</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Event Name</label>
+        <input class="form-input" id="f-name" value="${sanitize(e.name)}" /></div>
+      <div class="form-row3">
+        <div class="form-group"><label class="form-label">Year</label>
+          <input class="form-input" id="f-year" type="number" value="${e.year||''}" /></div>
+        <div class="form-group"><label class="form-label">Month</label>
+          <input class="form-input" id="f-month" type="number" value="${e.month||''}" /></div>
+        <div class="form-group"><label class="form-label">Day</label>
+          <input class="form-input" id="f-day" type="number" value="${e.day||''}" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc">${sanitize(e.description||'')}</textarea></div>
+      <div class="form-group"><label class="form-label">Importance</label>
+        <select class="form-select" id="f-importance">
+          ${['high','medium','low'].map(s=>`<option value="${s}"${e.importance===s?' selected':''}>${s}</option>`).join('')}
+        </select></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateEvent('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateEvent(id) {
+  const e = await dbGet('timeline', id);
+  e.name=v('f-name'); e.year=parseInt(v('f-year'))||null; e.month=parseInt(v('f-month'))||null;
+  e.day=parseInt(v('f-day'))||null; e.description=v('f-desc'); e.importance=v('f-importance');
+  await dbPut('timeline',e); closeModal(); toast('Saved!','success'); renderTimeline();
+}
+
+// ============================================================
+// WORLD BUILDING
+// ============================================================
+async function renderWorld() {
+  const [locations, organizations, artifacts] = await Promise.all([
+    dbGet('locations'), dbGet('organizations'), dbGet('artifacts')
+  ]);
+  const content = document.getElementById('content');
+  const worldTab = state.worldTab || 'locations';
+
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-header">
+        <div class="section-title">World Building</div>
+        <button class="btn btn-primary" onclick="showNewWorldItemModal()">+ Add Item</button>
+      </div>
+      <div class="tab-bar">
+        <div class="tab-item${worldTab==='locations'?' active':''}" onclick="setWorldTab('locations')">Locations (${locations.length})</div>
+        <div class="tab-item${worldTab==='organizations'?' active':''}" onclick="setWorldTab('organizations')">Organizations (${organizations.length})</div>
+        <div class="tab-item${worldTab==='artifacts'?' active':''}" onclick="setWorldTab('artifacts')">Artifacts (${artifacts.length})</div>
+      </div>
+      <div id="world-content">
+        ${worldTab === 'locations' ? renderWorldLocations(locations) :
+          worldTab === 'organizations' ? renderWorldOrgs(organizations) :
+          renderWorldArtifacts(artifacts)}
+      </div>
+    </div>
+  `;
+}
+
+function renderWorldLocations(locs) {
+  if (locs.length === 0) return `<div class="empty-state"><div class="empty-icon">🌍</div><div class="empty-title">No locations yet</div><button class="btn btn-primary" style="margin-top:16px" onclick="showNewWorldItemModal()">+ Add Location</button></div>`;
+  return `<div class="card-grid">${locs.map(l=>`
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:8px">🏔</div>
+      <div class="card-title">${sanitize(l.name)}</div>
+      ${l.region ? `<div class="card-meta">${sanitize(l.region)}</div>` : ''}
+      <div class="card-desc">${sanitize(l.description||'')}</div>
+      ${l.climate ? `<span class="tag tag-teal">${sanitize(l.climate)}</span>` : ''}
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="editWorldItem('locations','${l.id}')">Edit</button>
+        <button class="btn btn-sm" onclick="deleteItem('locations','${l.id}','Location',renderWorld)">✕</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function renderWorldOrgs(orgs) {
+  if (orgs.length === 0) return `<div class="empty-state"><div class="empty-icon">🏛</div><div class="empty-title">No organizations yet</div><button class="btn btn-primary" style="margin-top:16px" onclick="showNewWorldItemModal()">+ Add Organization</button></div>`;
+  return `<div class="card-grid">${orgs.map(o=>`
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:8px">🏛</div>
+      <div class="card-title">${sanitize(o.name)}</div>
+      ${o.type ? `<div class="card-meta">${sanitize(o.type)}</div>` : ''}
+      <div class="card-desc">${sanitize(o.description||'')}</div>
+      ${o.leader ? `<div style="margin-top:6px;font-size:12px;color:var(--text2)">Leader: ${sanitize(o.leader)}</div>` : ''}
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="editWorldItem('organizations','${o.id}')">Edit</button>
+        <button class="btn btn-sm" onclick="deleteItem('organizations','${o.id}','Organization',renderWorld)">✕</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function renderWorldArtifacts(arts) {
+  if (arts.length === 0) return `<div class="empty-state"><div class="empty-icon">⚔</div><div class="empty-title">No artifacts yet</div><button class="btn btn-primary" style="margin-top:16px" onclick="showNewWorldItemModal()">+ Add Artifact</button></div>`;
+  return `<div class="card-grid">${arts.map(a=>`
+    <div class="card">
+      <div style="font-size:28px;margin-bottom:8px">⚔</div>
+      <div class="card-title">${sanitize(a.name)}</div>
+      ${a.origin ? `<div class="card-meta">Origin: ${sanitize(a.origin)}</div>` : ''}
+      <div class="card-desc">${sanitize(a.description||'')}</div>
+      ${a.powers ? `<div style="margin-top:6px"><span class="tag tag-accent">${sanitize(a.powers)}</span></div>` : ''}
+      <div style="margin-top:10px;display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="editWorldItem('artifacts','${a.id}')">Edit</button>
+        <button class="btn btn-sm" onclick="deleteItem('artifacts','${a.id}','Artifact',renderWorld)">✕</button>
+      </div>
+    </div>
+  `).join('')}</div>`;
+}
+
+function setWorldTab(tab) {
+  state.worldTab = tab;
+  renderWorld();
+}
+
+function showNewWorldItemModal() {
+  const tab = state.worldTab || 'locations';
+  if (tab === 'locations') showNewLocationModal();
+  else if (tab === 'organizations') showNewOrgModal();
+  else showNewArtifactModal();
+}
+
+function showNewLocationModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Location</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Name *</label>
+        <input class="form-input" id="f-name" placeholder="The Dark Forest" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Kingdom / Country</label>
+          <input class="form-input" id="f-kingdom" /></div>
+        <div class="form-group"><label class="form-label">Region</label>
+          <input class="form-input" id="f-region" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">City</label>
+          <input class="form-input" id="f-city" /></div>
+        <div class="form-group"><label class="form-label">Climate</label>
+          <input class="form-input" id="f-climate" placeholder="Temperate, Arctic..." /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc"></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewLocation()">Add Location</button>
+    </div>
+  `);
+}
+
+async function saveNewLocation() {
+  const name = v('f-name');
+  if (!name) { toast('Name required','error'); return; }
+  await dbPut('locations', { name, kingdom: v('f-kingdom'), region: v('f-region'), city: v('f-city'), climate: v('f-climate'), description: v('f-desc') });
+  closeModal(); toast('Location added!','success'); renderWorld();
+}
+
+function showNewOrgModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Organization</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Name *</label>
+        <input class="form-input" id="f-name" placeholder="The Shadow Council" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="f-type">
+            <option>Hero Team</option><option>Government</option><option>Villain Group</option>
+            <option>Secret Society</option><option>Guild</option><option>Military</option><option>Religious</option>
+          </select></div>
+        <div class="form-group"><label class="form-label">Leader</label>
+          <input class="form-input" id="f-leader" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Members</label>
+        <input class="form-input" id="f-members" placeholder="Character names, comma-separated" /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc"></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewOrg()">Add Organization</button>
+    </div>
+  `);
+}
+
+async function saveNewOrg() {
+  const name = v('f-name');
+  if (!name) { toast('Name required','error'); return; }
+  await dbPut('organizations', { name, type: v('f-type'), leader: v('f-leader'), members: v('f-members'), description: v('f-desc') });
+  closeModal(); toast('Organization added!','success'); renderWorld();
+}
+
+function showNewArtifactModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Artifact</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Name *</label>
+        <input class="form-input" id="f-name" placeholder="The Ancient Sword" /></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Origin</label>
+          <input class="form-input" id="f-origin" /></div>
+        <div class="form-group"><label class="form-label">Current Owner</label>
+          <input class="form-input" id="f-owner" /></div>
+      </div>
+      <div class="form-group"><label class="form-label">Powers</label>
+        <input class="form-input" id="f-powers" placeholder="What can it do?" /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc"></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewArtifact()">Add Artifact</button>
+    </div>
+  `);
+}
+
+async function saveNewArtifact() {
+  const name = v('f-name');
+  if (!name) { toast('Name required','error'); return; }
+  await dbPut('artifacts', { name, origin: v('f-origin'), owner: v('f-owner'), powers: v('f-powers'), description: v('f-desc') });
+  closeModal(); toast('Artifact added!','success'); renderWorld();
+}
+
+async function editWorldItem(store, id) {
+  const item = await dbGet(store, id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit ${store.slice(0,-1)}</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Name</label>
+        <input class="form-input" id="f-name" value="${sanitize(item.name||'')}" /></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc">${sanitize(item.description||'')}</textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateWorldItem('${store}','${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateWorldItem(store, id) {
+  const item = await dbGet(store, id);
+  item.name=v('f-name'); item.description=v('f-desc');
+  await dbPut(store,item); closeModal(); toast('Saved!','success'); renderWorld();
+}
+
+// ============================================================
+// RELATIONSHIPS
+// ============================================================
+async function renderRelationships() {
+  const [characters, relationships] = await Promise.all([dbGet('characters'), dbGet('relationships')]);
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-header">
+        <div><div class="section-title">Character Connections</div></div>
+        <button class="btn btn-primary" onclick="showNewRelationshipModal()">+ Add Connection</button>
+      </div>
+      <div class="graph-container" id="rel-graph">
+        <canvas id="rel-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+        ${characters.length < 2 ? `<div style="text-align:center;color:var(--text3)"><div style="font-size:32px;margin-bottom:8px">◉</div><div>Add at least 2 characters to see connections</div></div>` : ''}
+      </div>
+      <div style="margin-top:20px">
+        <div class="section-title" style="margin-bottom:12px">All Connections (${relationships.length})</div>
+        ${relationships.length === 0 ? `<p style="color:var(--text3);font-size:13px">No connections defined yet.</p>` :
+          `<div style="display:flex;flex-direction:column;gap:8px">
+            ${relationships.map(r=>`
+              <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;gap:12px">
+                <span style="font-weight:600;color:var(--text)">${sanitize(r.from)}</span>
+                <span class="tag tag-accent">${sanitize(r.type)}</span>
+                <span style="font-weight:600;color:var(--text)">${sanitize(r.to)}</span>
+                ${r.description ? `<span style="color:var(--text3);font-size:12px;margin-left:auto">${sanitize(r.description)}</span>` : ''}
+                <button class="btn btn-sm" onclick="deleteItem('relationships','${r.id}','Connection',renderRelationships)" style="color:var(--danger)">✕</button>
+              </div>
+            `).join('')}
+          </div>`}
+      </div>
+    </div>
+  `;
+
+  if (characters.length >= 2) drawRelGraph(characters, relationships);
+}
+
+function drawRelGraph(chars, rels) {
+  const canvas = document.getElementById('rel-canvas');
+  if (!canvas) return;
+  const container = document.getElementById('rel-graph');
+  canvas.width = container.offsetWidth;
+  canvas.height = container.offsetHeight;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+
+  const nodes = chars.slice(0,20).map((c, i) => {
+    const angle = (i / Math.min(chars.length, 20)) * Math.PI * 2;
+    return { id: c.id, name: c.name, x: W/2 + Math.cos(angle)*(Math.min(W,H)*0.35), y: H/2 + Math.sin(angle)*(Math.min(W,H)*0.35) };
+  });
+
+  ctx.clearRect(0,0,W,H);
+
+  rels.forEach(r => {
+    const fromNode = nodes.find(n=>n.name===r.from || n.id===r.fromId);
+    const toNode = nodes.find(n=>n.name===r.to || n.id===r.toId);
+    if (!fromNode || !toNode) return;
+    ctx.beginPath();
+    ctx.moveTo(fromNode.x, fromNode.y);
+    ctx.lineTo(toNode.x, toNode.y);
+    ctx.strokeStyle = 'rgba(124,106,247,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    const mx = (fromNode.x+toNode.x)/2, my = (fromNode.y+toNode.y)/2;
+    ctx.fillStyle = 'rgba(160,139,255,0.8)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(r.type||'', mx, my);
+  });
+
+  nodes.forEach(n => {
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, 22, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(30,30,48,0.95)';
+    ctx.fill();
+    ctx.strokeStyle = '#7c6af7';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = '#e8e6f8';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(n.name.charAt(0).toUpperCase(), n.x, n.y);
+    ctx.font = '10px sans-serif';
+    ctx.fillStyle = 'rgba(160,156,192,0.8)';
+    ctx.textBaseline = 'top';
+    ctx.fillText(n.name.length > 10 ? n.name.slice(0,9)+'…' : n.name, n.x, n.y+26);
+  });
+}
+
+async function showNewRelationshipModal() {
+  const chars = await dbGet('characters');
+  const opts = chars.map(c=>`<option value="${sanitize(c.name)}">${sanitize(c.name)}</option>`).join('');
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Connection</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">From Character *</label>
+          <select class="form-select" id="f-from"><option value="">Select...</option>${opts}</select></div>
+        <div class="form-group"><label class="form-label">To Character *</label>
+          <select class="form-select" id="f-to"><option value="">Select...</option>${opts}</select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Relationship Type</label>
+        <select class="form-select" id="f-type">
+          <option>Friend</option><option>Enemy</option><option>Mentor</option>
+          <option>Family</option><option>Ally</option><option>Rival</option><option>Love Interest</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Description</label>
+        <input class="form-input" id="f-desc" placeholder="Brief description..." /></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRelationship()">Add Connection</button>
+    </div>
+  `);
+}
+
+async function saveRelationship() {
+  const from = v('f-from'), to = v('f-to');
+  if (!from || !to) { toast('Select both characters','error'); return; }
+  await dbPut('relationships', { from, to, type: v('f-type'), description: v('f-desc') });
+  closeModal(); toast('Connection added!','success'); renderRelationships();
+}
+
+// ============================================================
+// PLANNING (KANBAN)
+// ============================================================
+async function renderPlanning() {
+  const notes = await dbGet('notes');
+  const planCards = notes.filter(n=>n.type==='plan');
+  const cols = ['Ideas','Research','Outline','Draft','Revision','Completed'];
+  const content = document.getElementById('content');
+
+  content.style.padding = '24px';
+  content.innerHTML = `
+    <div style="height:100%;display:flex;flex-direction:column">
+      <div class="section-header">
+        <div class="section-title">Story Planning Board</div>
+        <button class="btn btn-primary" onclick="showNewPlanningCard()">+ New Card</button>
+      </div>
+      <div class="kanban-board" style="flex:1">
+        ${cols.map(col=>`
+          <div class="kanban-col" data-col="${col}">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title">${col}</div>
+              <span style="font-size:11px;color:var(--text3)">${planCards.filter(c=>c.planCol===col).length}</span>
+            </div>
+            <div class="kanban-col-body" id="col-${col}" ondrop="dropCard(event,'${col}')" ondragover="event.preventDefault()">
+              ${planCards.filter(c=>c.planCol===col).map(card=>`
+                <div class="kanban-card" draggable="true" ondragstart="dragCard(event,'${card.id}')">
+                  <div class="kanban-card-title">${sanitize(card.title||'')}</div>
+                  ${card.content ? `<div class="kanban-card-meta">${sanitize(card.content.slice(0,80))}${card.content.length>80?'…':''}</div>` : ''}
+                  <div style="display:flex;gap:4px;margin-top:8px">
+                    <button class="btn btn-sm" onclick="editPlanCard('${card.id}')">Edit</button>
+                    <button class="btn btn-sm" onclick="deleteItem('notes','${card.id}','Card',renderPlanning)" style="color:var(--danger)">✕</button>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+let dragCardId = null;
+function dragCard(e, id) { dragCardId = id; e.dataTransfer.effectAllowed='move'; }
+async function dropCard(e, col) {
+  e.preventDefault();
+  if (!dragCardId) return;
+  const card = await dbGet('notes', dragCardId);
+  card.planCol = col;
+  await dbPut('notes', card);
+  renderPlanning();
+}
+
+function showNewPlanningCard() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Planning Card</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Title *</label>
+        <input class="form-input" id="f-title" placeholder="Card title..." /></div>
+      <div class="form-group"><label class="form-label">Column</label>
+        <select class="form-select" id="f-col">
+          <option>Ideas</option><option>Research</option><option>Outline</option>
+          <option>Draft</option><option>Revision</option><option>Completed</option>
+        </select></div>
+      <div class="form-group"><label class="form-label">Details</label>
+        <textarea class="form-textarea" id="f-content" placeholder="Notes about this card..."></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="savePlanningCard()">Add Card</button>
+    </div>
+  `);
+}
+
+async function savePlanningCard() {
+  const title = v('f-title');
+  if (!title) { toast('Title required','error'); return; }
+  await dbPut('notes', { title, content: v('f-content'), planCol: v('f-col'), type: 'plan' });
+  closeModal(); toast('Card added!','success'); renderPlanning();
+}
+
+async function editPlanCard(id) {
+  const card = await dbGet('notes', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Card</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="f-title" value="${sanitize(card.title||'')}" /></div>
+      <div class="form-group"><label class="form-label">Column</label>
+        <select class="form-select" id="f-col">
+          ${['Ideas','Research','Outline','Draft','Revision','Completed'].map(c=>`<option${card.planCol===c?' selected':''}>${c}</option>`).join('')}
+        </select></div>
+      <div class="form-group"><label class="form-label">Details</label>
+        <textarea class="form-textarea" id="f-content">${sanitize(card.content||'')}</textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updatePlanCard('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updatePlanCard(id) {
+  const card = await dbGet('notes', id);
+  card.title=v('f-title'); card.content=v('f-content'); card.planCol=v('f-col');
+  await dbPut('notes',card); closeModal(); toast('Saved!','success'); renderPlanning();
+}
+
+// ============================================================
+// NOTES
+// ============================================================
+async function renderNotes() {
+  const notes = (await dbGet('notes')).filter(n=>n.type!=='plan');
+  const content = document.getElementById('content');
+
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-header">
+        <div><div class="section-title">Notes</div><div class="section-sub">${notes.length} notes</div></div>
+        <button class="btn btn-primary" onclick="showNewNoteModal()">+ New Note</button>
+      </div>
+      ${notes.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-icon">🗒</div>
+          <div class="empty-title">No notes yet</div>
+          <div class="empty-desc">Capture ideas, research, and writing notes.</div>
+          <button class="btn btn-primary" style="margin-top:16px" onclick="showNewNoteModal()">+ New Note</button>
+        </div>
+      ` : `<div class="card-grid">${notes.map(n=>`
+        <div class="note-card${n.pinned?' pinned':''}">
+          ${n.pinned ? '<div class="note-pin">📌</div>' : ''}
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em">${n.noteType||'Quick'}</div>
+          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px">${sanitize(n.title||'Untitled')}</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${sanitize(n.content||'')}</div>
+          <div style="display:flex;gap:6px;margin-top:12px;align-items:center">
+            <span style="font-size:11px;color:var(--text3);flex:1">${timeAgo(n.updatedAt)}</span>
+            <button class="btn btn-sm" onclick="editNote('${n.id}')">Edit</button>
+            <button class="btn btn-sm" onclick="togglePin('${n.id}')" title="${n.pinned?'Unpin':'Pin'}">${n.pinned?'📌':'📍'}</button>
+            <button class="btn btn-sm" onclick="deleteItem('notes','${n.id}','Note',renderNotes)" style="color:var(--danger)">✕</button>
+          </div>
+        </div>
+      `).join('')}</div>`}
+    </div>
+  `;
+}
+
+function showNewNoteModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Note</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Title</label>
+          <input class="form-input" id="f-title" placeholder="Note title..." /></div>
+        <div class="form-group"><label class="form-label">Type</label>
+          <select class="form-select" id="f-type">
+            <option>Quick</option><option>Research</option><option>Plot</option><option>Writing</option>
+          </select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Content</label>
+        <textarea class="form-textarea" id="f-content" style="min-height:150px" placeholder="Write your note..."></textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewNote()">Save Note</button>
+    </div>
+  `);
+}
+
+async function saveNewNote() {
+  const title = v('f-title') || 'Untitled';
+  await dbPut('notes', { title, content: v('f-content'), noteType: v('f-type'), type: 'note', pinned: false });
+  closeModal(); toast('Note saved!','success'); renderNotes();
+}
+
+async function editNote(id) {
+  const n = await dbGet('notes', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Note</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group"><label class="form-label">Title</label>
+        <input class="form-input" id="f-title" value="${sanitize(n.title||'')}" /></div>
+      <div class="form-group"><label class="form-label">Content</label>
+        <textarea class="form-textarea" id="f-content" style="min-height:150px">${sanitize(n.content||'')}</textarea></div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateNote('${id}')">Save</button>
+    </div>
+  `);
+}
+
+async function updateNote(id) {
+  const n = await dbGet('notes', id);
+  n.title=v('f-title'); n.content=v('f-content');
+  await dbPut('notes',n); closeModal(); toast('Saved!','success'); renderNotes();
+}
+
+async function togglePin(id) {
+  const n = await dbGet('notes', id);
+  n.pinned = !n.pinned;
+  await dbPut('notes', n); renderNotes();
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+async function renderSearch() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:800px">
+      <div style="margin-bottom:24px">
+        <div class="section-title" style="margin-bottom:8px">Global Search</div>
+        <div class="search-bar" style="max-width:100%;display:flex">
+          <span style="color:var(--text3);font-size:16px">🔍</span>
+          <input type="text" placeholder="Search characters, books, events, notes..." id="main-search" class="form-input" style="border:none;background:none;flex:1" oninput="doSearch(this.value)" autofocus />
+        </div>
+      </div>
+      <div id="search-results"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start typing to search</div></div></div>
+    </div>
+  `;
+}
+
+async function doSearch(query) {
+  if (!query.trim()) {
+    document.getElementById('search-results').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Start typing to search</div></div>';
+    return;
+  }
+  const q = query.toLowerCase();
+  const [chars, books, chapters, events, notes, locs] = await Promise.all([
+    dbGet('characters'), dbGet('books'), dbGet('chapters'), dbGet('timeline'), dbGet('notes'), dbGet('locations')
+  ]);
+  const results = [
+    ...chars.filter(c=>matches(c,q,'name','nickname','backstory')).map(c=>({type:'Character',icon:'👤',title:c.name,sub:c.nickname||'',id:c.id})),
+    ...books.filter(b=>matches(b,q,'title','description')).map(b=>({type:'Book',icon:'📚',title:b.title,sub:b.subtitle||'',id:b.id})),
+    ...chapters.filter(c=>matches(c,q,'title','content')).map(c=>({type:'Chapter',icon:'📝',title:c.title,sub:`${wordCount(c.content||'')} words`,id:c.id})),
+    ...events.filter(e=>matches(e,q,'name','description')).map(e=>({type:'Event',icon:'⏱',title:e.name,sub:e.year?`Year ${e.year}`:'',id:e.id})),
+    ...notes.filter(n=>matches(n,q,'title','content')).map(n=>({type:'Note',icon:'🗒',title:n.title,sub:'',id:n.id})),
+    ...locs.filter(l=>matches(l,q,'name','description')).map(l=>({type:'Location',icon:'🌍',title:l.name,sub:l.region||'',id:l.id})),
+  ];
+
+  const el = document.getElementById('search-results');
+  el.innerHTML = results.length === 0 ? `<p style="color:var(--text3);font-size:13px">No results for "${sanitize(query)}"</p>` : `
+    <div style="margin-bottom:12px;font-size:12px;color:var(--text3)">${results.length} result${results.length!==1?'s':''}</div>
+    ${results.map(r=>`
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="searchNav('${r.type}','${r.id}')">
+        <span style="font-size:20px">${r.icon}</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${sanitize(r.title)}</div>
+          <div style="font-size:11px;color:var(--text3)">${r.type}${r.sub?` · ${sanitize(r.sub)}`:''}</div>
+        </div>
+        <span style="margin-left:auto;font-size:11px;color:var(--text3)">→</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+function matches(obj, q, ...fields) {
+  return fields.some(f => (obj[f]||'').toLowerCase().includes(q));
+}
+
+function searchNav(type, id) {
+  const routes = {Character:'characters',Book:'books',Chapter:'chapters',Event:'timeline',Note:'notes',Location:'world'};
+  nav(routes[type]||'dashboard');
+}
+
+async function globalSearch(q) { if (state.currentPage==='search') doSearch(q); }
+
+// ============================================================
+// STATISTICS
+// ============================================================
+async function renderStats() {
+  const [projects, books, chapters, characters, timeline, notes, locs, orgs] = await Promise.all([
+    dbGet('projects'), dbGet('books'), dbGet('chapters'), dbGet('characters'),
+    dbGet('timeline'), dbGet('notes'), dbGet('locations'), dbGet('organizations')
+  ]);
+
+  const totalWords = chapters.reduce((s,c)=>s+wordCount(c.content||''),0);
+  const completedChaps = chapters.filter(c=>c.status==='completed').length;
+  const heroChars = characters.filter(c=>(c.tags||[]).includes('Hero')).length;
+  const villainChars = characters.filter(c=>(c.tags||[]).includes('Villain')).length;
+
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:1000px">
+      <div class="section-title" style="margin-bottom:20px">Writing Statistics</div>
+      <div class="stats-grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+        <div class="stat-card"><div class="stat-num">${fmtNum(totalWords)}</div><div class="stat-label">Total Words</div></div>
+        <div class="stat-card"><div class="stat-num">${chapters.length}</div><div class="stat-label">Chapters</div></div>
+        <div class="stat-card"><div class="stat-num">${completedChaps}</div><div class="stat-label">Completed</div></div>
+        <div class="stat-card"><div class="stat-num">${characters.length}</div><div class="stat-label">Characters</div></div>
+        <div class="stat-card"><div class="stat-num">${timeline.length}</div><div class="stat-label">Events</div></div>
+        <div class="stat-card"><div class="stat-num">${locs.length}</div><div class="stat-label">Locations</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Books Progress</div>
+          ${books.length === 0 ? '<p style="color:var(--text3);font-size:13px">No books yet</p>' :
+            books.map(b=>{
+              const bChaps = chapters.filter(c=>c.bookId===b.id);
+              const bWords = bChaps.reduce((s,c)=>s+wordCount(c.content||''),0);
+              const pct = Math.min(100, Math.round(bWords/(b.targetWords||80000)*100));
+              return `<div style="margin-bottom:16px">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span style="font-size:13px;color:var(--text)">${sanitize(b.title)}</span>
+                  <span style="font-size:12px;color:var(--text3)">${fmtNum(bWords)} / ${fmtNum(b.targetWords||80000)} words</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+                <div style="font-size:11px;color:var(--text3);margin-top:4px">${pct}% complete · ${bChaps.length} chapters</div>
+              </div>`;
+            }).join('')}
+        </div>
+
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px">
+          <div class="section-title" style="margin-bottom:16px">Character Breakdown</div>
+          ${[['Heroes', heroChars, 'teal'], ['Villains', villainChars, 'coral'],
+             ['Supporting', characters.filter(c=>(c.tags||[]).includes('Supporting')).length, 'gold'],
+             ['Other', characters.length - heroChars - villainChars, 'accent']
+            ].map(([l,n,t])=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:12px;color:var(--text2);min-width:90px">${l}</span>
+              <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px">
+                <div style="height:100%;background:var(--${t});border-radius:3px;width:${characters.length>0?Math.round(n/characters.length*100):0}%"></div>
+              </div>
+              <span style="font-size:12px;color:var(--text3);min-width:20px">${n}</span>
+            </div>
+          `).join('')}
+
+          <div class="divider"></div>
+          <div class="section-title" style="margin-bottom:12px;margin-top:4px">Chapter Status</div>
+          ${[['Outline', chapters.filter(c=>c.status==='outline').length, '#888'],
+             ['Draft', chapters.filter(c=>c.status==='draft').length, 'var(--warn)'],
+             ['Revision', chapters.filter(c=>c.status==='revision').length, 'var(--coral)'],
+             ['Completed', completedChaps, 'var(--success)']
+            ].map(([l,n,color])=>`
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></div>
+              <span style="font-size:12px;color:var(--text2);flex:1">${l}</span>
+              <span style="font-size:12px;color:var(--text3)">${n}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// EXPORT / IMPORT
+// ============================================================
+async function renderExport() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:700px">
+      <div class="section-title" style="margin-bottom:20px">Export & Import</div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;margin-bottom:16px">
+        <div class="settings-title">Export Project Data</div>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Export all your story data as a file you can backup or share.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="exportData('json')">Export as JSON</button>
+          <button class="btn" onclick="exportData('markdown')">Export as Markdown</button>
+          <button class="btn" onclick="exportData('txt')">Export as Text</button>
+        </div>
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px;margin-bottom:16px">
+        <div class="settings-title">Import Data</div>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Import a previously exported JSON file to restore your data.</p>
+        <input type="file" id="import-file" accept=".json" style="margin-bottom:12px;color:var(--text2);font-size:13px" onchange="importData(this)" />
+      </div>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:20px">
+        <div class="settings-title">Manual Backup</div>
+        <p style="font-size:13px;color:var(--text3);margin-bottom:16px">Create a snapshot of all your data.</p>
+        <button class="btn btn-primary" onclick="manualBackup()">💾 Create Backup Now</button>
+        <div id="backup-list" style="margin-top:16px"></div>
+      </div>
+    </div>
+  `;
+  loadBackupList();
+}
+
+async function exportData(format) {
+  const stores = ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships'];
+  const data = {};
+  for (const s of stores) data[s] = await dbGet(s);
+  data.exportedAt = new Date().toISOString();
+  data.version = '1.0';
+
+  let content, filename, mime;
+  if (format === 'json') {
+    content = JSON.stringify(data, null, 2);
+    filename = `dream-story-export-${Date.now()}.json`;
+    mime = 'application/json';
+  } else if (format === 'markdown') {
+    content = buildMarkdownExport(data);
+    filename = `dream-story-export-${Date.now()}.md`;
+    mime = 'text/markdown';
+  } else {
+    content = buildTextExport(data);
+    filename = `dream-story-export-${Date.now()}.txt`;
+    mime = 'text/plain';
+  }
+
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+  toast('Export ready!','success');
+}
+
+function buildMarkdownExport(data) {
+  let md = `# Dream Story Universe Export\n\nExported: ${data.exportedAt}\n\n`;
+  if (data.characters?.length) {
+    md += `## Characters (${data.characters.length})\n\n`;
+    data.characters.forEach(c => {
+      md += `### ${c.name||'Unnamed'}\n`;
+      if (c.nickname) md += `**Nickname:** ${c.nickname}\n`;
+      if (c.backstory) md += `\n**Backstory:** ${c.backstory}\n`;
+      md += '\n';
+    });
+  }
+  if (data.books?.length) {
+    md += `## Books (${data.books.length})\n\n`;
+    data.books.forEach(b => { md += `### ${b.title||'Untitled'}\n${b.description||''}\n\n`; });
+  }
+  if (data.chapters?.length) {
+    md += `## Chapters (${data.chapters.length})\n\n`;
+    data.chapters.forEach(c => { md += `### ${c.title||'Untitled'}\n\n${c.content||''}\n\n---\n\n`; });
+  }
+  return md;
+}
+
+function buildTextExport(data) {
+  let txt = `DREAM STORY UNIVERSE EXPORT\nExported: ${data.exportedAt}\n${'='.repeat(50)}\n\n`;
+  if (data.chapters?.length) {
+    data.chapters.forEach(c => { txt += `CHAPTER: ${c.title||'Untitled'}\n${'-'.repeat(30)}\n${c.content||''}\n\n`; });
+  }
+  return txt;
+}
+
+async function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data.version) { toast('Invalid export file','error'); return; }
+
+    const stores = ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships'];
+    for (const s of stores) {
+      if (data[s]) {
+        for (const item of data[s]) await dbPut(s, item);
+      }
+    }
+    toast(`Import complete! Restored data.`, 'success');
+    renderDashboard();
+    nav('dashboard');
+  } catch(e) {
+    toast('Import failed: invalid file', 'error');
+  }
+}
+
+async function manualBackup() {
+  const stores = ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships'];
+  const data = {};
+  for (const s of stores) data[s] = await dbGet(s);
+
+  await dbPut('backups', {
+    timestamp: Date.now(),
+    label: `Backup ${new Date().toLocaleString()}`,
+    data: JSON.stringify(data)
+  });
+  updateLastSaved();
+  toast('Backup created!','success');
+  if (document.getElementById('backup-list')) loadBackupList();
+}
+
+async function loadBackupList() {
+  const el = document.getElementById('backup-list');
+  if (!el) return;
+  const backups = (await dbGet('backups')).sort((a,b)=>b.timestamp-a.timestamp).slice(0,5);
+  el.innerHTML = backups.length === 0 ? '<p style="font-size:12px;color:var(--text3)">No backups yet</p>' :
+    backups.map(b=>`
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px;color:var(--text2);flex:1">${sanitize(b.label)}</span>
+        <button class="btn btn-sm" onclick="restoreBackup('${b.id}')">Restore</button>
+      </div>
+    `).join('');
+}
+
+async function restoreBackup(id) {
+  if (!confirm('Restore this backup? Current data will be overwritten.')) return;
+  const backup = await dbGet('backups', id);
+  const data = JSON.parse(backup.data);
+  const stores = Object.keys(data);
+  for (const s of stores) {
+    if (Array.isArray(data[s])) for (const item of data[s]) await dbPut(s, item);
+  }
+  toast('Backup restored!','success');
+  nav('dashboard');
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+async function renderSettings() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:700px">
+      <div class="section-title" style="margin-bottom:20px">Settings</div>
+
+      <div class="settings-section">
+        <div class="settings-title">Appearance</div>
+        <div class="settings-row">
+          <div><div class="settings-label">Theme</div><div class="settings-desc">Currently using dark theme</div></div>
+          <select class="form-select" style="width:auto" onchange="changeSetting('theme',this.value)">
+            <option value="dark" selected>Dark</option>
+            <option value="light">Light (coming soon)</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Editor Font Size</div></div>
+          <select class="form-select" style="width:auto" onchange="changeSetting('fontSize',this.value)">
+            <option>14px</option><option>15px</option><option>16px</option><option>18px</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Autosave</div>
+        <div class="settings-row">
+          <div><div class="settings-label">Enable Autosave</div><div class="settings-desc">Automatically save every 2 seconds</div></div>
+          <label class="toggle"><input type="checkbox" checked onchange="changeSetting('autosave',this.checked)"><div class="toggle-slider"></div></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Auto Backup</div><div class="settings-desc">Create periodic backups</div></div>
+          <label class="toggle"><input type="checkbox" checked><div class="toggle-slider"></div></label>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Data Management</div>
+        <div class="settings-row">
+          <div><div class="settings-label">Export All Data</div><div class="settings-desc">Download everything as JSON</div></div>
+          <button class="btn btn-sm" onclick="exportData('json')">Export</button>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Clear All Data</div><div class="settings-desc" style="color:var(--danger)">This cannot be undone</div></div>
+          <button class="btn btn-sm" style="color:var(--danger);border-color:var(--danger)" onclick="clearAllData()">Clear</button>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">About</div>
+        <div class="settings-row">
+          <div><div class="settings-label">Dream Story Universe Studio</div><div class="settings-desc">Version 1.0 · Offline-first · IndexedDB</div></div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-label">Storage</div><div class="settings-desc">Local browser storage (IndexedDB)</div></div>
+          <span style="font-size:12px;color:var(--text3)" id="storage-info">Calculating...</span>
+        </div>
+      </div>
+    </div>
+  `;
+  estimateStorage();
+}
+
+async function estimateStorage() {
+  try {
+    const est = await navigator.storage.estimate();
+    const used = (est.usage / 1024 / 1024).toFixed(2);
+    const el = document.getElementById('storage-info');
+    if (el) el.textContent = `~${used} MB used`;
+  } catch(e) {}
+}
+
+function changeSetting(key, value) {
+  state.settings[key] = value;
+  toast('Setting saved','success');
+}
+
+async function clearAllData() {
+  if (!confirm('Delete ALL data? This cannot be undone!')) return;
+  const stores = ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships','backups'];
+  for (const s of stores) {
+    const items = await dbGet(s);
+    for (const item of items) await dbDelete(s, item.id);
+  }
+  state.currentProject = null; state.currentBook = null; state.currentChapter = null;
+  toast('All data cleared','success'); nav('dashboard');
+}
+
+// ============================================================
+// MODAL SYSTEM
+// ============================================================
+function showModal(html, extraClass='') {
+  const container = document.getElementById('modal-container');
+  container.innerHTML = `
+    <div class="panel-overlay" onclick="handleOverlayClick(event)">
+      <div class="panel ${extraClass}">${html}</div>
+    </div>
+  `;
+}
+
+function handleOverlayClick(e) {
+  if (e.target.classList.contains('panel-overlay')) closeModal();
+}
+
+function closeModal() {
+  document.getElementById('modal-container').innerHTML = '';
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(message, type='') {
+  const container = document.getElementById('toast-container');
+  const id = 'toast-' + Date.now();
+  const icons = {success:'✓',error:'✕','':`ℹ`};
+  const el = document.createElement('div');
+  el.className = `toast${type?` toast-${type}`:''}`;
+  el.id = id;
+  el.innerHTML = `<span style="color:var(--${type==='success'?'success':type==='error'?'danger':'text2'})">${icons[type]||'ℹ'}</span><span>${sanitize(message)}</span>`;
+  container.appendChild(el);
+  setTimeout(()=>{ const e=document.getElementById(id); if(e) e.remove(); }, 3000);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function sanitize(str) {
+  if (str === null || str === undefined) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+function wordCount(text) {
+  if (!text || !text.trim()) return 0;
+  return text.trim().split(/\s+/).length;
+}
+
+function charCount(text) { return (text||'').length; }
+
+function readingTime(text) {
+  return Math.max(1, Math.round(wordCount(text) / 250));
+}
+
+function fmtNum(n) {
+  if (n >= 1000) return (n/1000).toFixed(1) + 'k';
+  return String(n);
+}
+
+function timeAgo(ts) {
+  if (!ts) return 'Never';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) return `${Math.round(diff/60000)}m ago`;
+  if (diff < 86400000) return `${Math.round(diff/3600000)}h ago`;
+  return `${Math.round(diff/86400000)}d ago`;
+}
+
+function updateLastSaved() {
+  state.lastSaved = Date.now();
+  const el = document.getElementById('last-saved');
+  if (el) el.textContent = `Saved ${timeAgo(state.lastSaved)}`;
+}
+
+async function deleteItem(store, id, label, callback) {
+  if (!confirm(`Delete this ${label}? This cannot be undone.`)) return;
+  await dbDelete(store, id);
+  toast(`${label} deleted`, 'success');
+  if (callback) callback();
+}
+
+function filterTimeline() {
+  toast('Filter coming soon','');
+}
+
+// ============================================================
+// GLOBAL AUTOSAVE (every 30s)
+// ============================================================
+setInterval(async () => {
+  if (state.currentPage === 'chapters' && state.currentChapter) {
+    await saveCurrentChapter();
+    updateLastSaved();
+  }
+}, 30000);
+
+// Update "last saved" display periodically
+setInterval(()=>{
+  if (state.lastSaved) {
+    const el = document.getElementById('last-saved');
+    if (el) el.textContent = `Saved ${timeAgo(state.lastSaved)}`;
+  }
+}, 60000);
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  await initDB();
+  // Seed settings if first run
+  let settings = await dbGet('settings', 'app-settings');
+  if (!settings) {
+    await dbPut('settings', { id: 'app-settings', theme: 'dark', autosave: true });
+  }
+
+  nav('dashboard');
+  toast('Welcome to Dream Story Universe Studio ✦', 'success');
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
