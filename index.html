@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dream Story Universe Studio</title>
+<title>MZ Studio</title>
 <style>
 :root {
   --bg: #0d0d14;
@@ -239,22 +239,66 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 .toggle input:checked+.toggle-slider{background:var(--accent)}
 .toggle-slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:0.2s}
 .toggle input:checked+.toggle-slider::before{transform:translateX(16px)}
-/* Responsive */
-@media(max-width:768px){
-  :root{--sidebar-w:56px}
-  #sidebar .nav-label,.sidebar-label,.logo-text{display:none}
-  #sidebar .logo-icon{margin:0 auto}
-  #editor-area{padding:24px 20px}
+/* Mobile overlay sidebar backdrop */
+#sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;backdrop-filter:blur(2px)}
+/* Hamburger button for mobile topbar */
+#mobile-menu-btn{display:none;background:none;border:none;color:var(--text);cursor:pointer;padding:6px;border-radius:var(--radius);font-size:18px;flex-shrink:0}
+/* Tablet */
+@media(max-width:900px){
+  :root{--sidebar-w:200px}
+  .form-row3{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  #editor-area{padding:24px 32px}
+}
+/* Mobile */
+@media(max-width:640px){
+  :root{--sidebar-w:260px}
+  #mobile-menu-btn{display:flex}
+  #sidebar-backdrop.visible{display:block}
+  #sidebar{position:fixed;left:0;top:0;bottom:0;z-index:200;transform:translateX(-100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);width:var(--sidebar-w)!important}
+  #sidebar.mobile-open{transform:translateX(0)}
+  #sidebar .sidebar-toggle{display:none}
+  .logo-text{display:block!important}
+  .nav-label{display:block!important}
+  .sidebar-label{display:block!important}
+  #content{padding:16px!important}
+  #editor-area{padding:20px 16px!important}
+  .form-row,.form-row3{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  #topbar{padding:0 12px;gap:8px}
+  #last-saved{display:none}
+  .topbar-actions .btn-sm:not(#topbar-action-btn){display:none}
+  .panel{width:95vw!important;max-height:92vh}
+  #editor-container{flex-direction:column}
+  #editor-sidebar{width:100%!important;max-height:160px;border-right:none;border-bottom:1px solid var(--border)}
+  #chapter-list{display:flex;flex-direction:row;overflow-x:auto;padding:4px}
+  .chapter-item{flex-shrink:0;min-width:120px}
+  .kanban-board{gap:10px}
+  .kanban-col{min-width:180px}
+  .topbar-breadcrumb{display:none}
+  #editor-area.focus-mode{padding:40px 16px!important}
+  .tab-bar{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+  .tab-item{flex-shrink:0}
+  .arc-timeline{gap:0}
+}
+@media(min-width:641px){
+  #mobile-menu-btn{display:none!important}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <!-- SIDEBAR -->
-  <nav id="sidebar">
+<div id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+<nav id="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-icon">✦</div>
-      <div class="logo-text">Dream Story<br><span class="logo-sub">Universe Studio</span></div>
+      <div class="logo-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </div>
+      <div class="logo-text">MZ Studio<br><span class="logo-sub">Story Universe</span></div>
       <button class="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">☰</button>
     </div>
     <div class="sidebar-scroll">
@@ -296,6 +340,9 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
       </div>
       <div class="sidebar-section">
         <div class="sidebar-label">Tools</div>
+        <button class="nav-item" onclick="nav('research')">
+          <span class="nav-icon">🔬</span><span class="nav-label">Research</span>
+        </button>
         <button class="nav-item" onclick="nav('notes')">
           <span class="nav-icon">🗒</span><span class="nav-label">Notes</span>
         </button>
@@ -320,9 +367,10 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
   <!-- MAIN CONTENT -->
   <div id="main">
     <div id="topbar">
+      <button id="mobile-menu-btn" onclick="openMobileSidebar()" title="Menu">☰</button>
       <div>
         <div class="topbar-title" id="page-title">Dashboard</div>
-        <div class="topbar-breadcrumb" id="page-breadcrumb">Dream Story Universe Studio</div>
+        <div class="topbar-breadcrumb" id="page-breadcrumb">MZ Studio</div>
       </div>
       <div class="topbar-actions">
         <div class="search-bar" id="global-search-bar" style="display:none">
@@ -345,8 +393,8 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
 // ============================================================
 // DATABASE - IndexedDB
 // ============================================================
-const DB_NAME = 'DreamStoryStudio';
-const DB_VERSION = 1;
+const DB_NAME = 'MZStudio';
+const DB_VERSION = 2;
 let db;
 
 function initDB() {
@@ -354,7 +402,7 @@ function initDB() {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = e => {
       const d = e.target.result;
-      ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships','backups','settings'].forEach(store => {
+      ['projects','books','chapters','characters','timeline','locations','organizations','artifacts','notes','relationships','backups','settings','research'].forEach(store => {
         if (!d.objectStoreNames.contains(store)) {
           d.createObjectStore(store, {keyPath:'id'});
         }
@@ -414,6 +462,7 @@ const state = {
 // ============================================================
 function nav(page) {
   state.currentPage = page;
+  closeMobileSidebar();
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(el => {
     if (el.getAttribute('onclick') === `nav('${page}')`) el.classList.add('active');
@@ -423,16 +472,17 @@ function nav(page) {
     dashboard:'Dashboard', projects:'Projects', books:'Books', chapters:'Write',
     planning:'Story Planning', characters:'Characters', timeline:'Timeline',
     world:'World Building', relationships:'Connections', notes:'Notes',
-    search:'Search', stats:'Statistics', export:'Export / Import', settings:'Settings'
+    search:'Search', stats:'Statistics', export:'Export / Import', settings:'Settings',
+    research:'Research'
   };
   document.getElementById('page-title').textContent = titles[page] || page;
-  document.getElementById('page-breadcrumb').textContent = 'Dream Story Universe Studio';
+  document.getElementById('page-breadcrumb').textContent = 'MZ Studio';
   document.getElementById('global-search-bar').style.display = page === 'search' ? 'flex' : 'none';
 
   const actionLabels = {
     projects:'+ New Project', books:'+ New Book', chapters:'+ Chapter',
     characters:'+ New Character', timeline:'+ New Event', world:'+ Add Item',
-    notes:'+ New Note', planning:'+ New Card'
+    notes:'+ New Note', planning:'+ New Card', research:'+ New Entry'
   };
   document.getElementById('topbar-action-btn').textContent = actionLabels[page] || '+ New';
 
@@ -448,7 +498,8 @@ function topbarAction() {
     timeline: showNewEventModal,
     notes: showNewNoteModal,
     world: showNewWorldItemModal,
-    planning: showNewPlanningCard
+    planning: showNewPlanningCard,
+    research: showNewResearchModal
   };
   if (actions[state.currentPage]) actions[state.currentPage]();
 }
@@ -456,6 +507,16 @@ function topbarAction() {
 function toggleSidebar() {
   state.sidebarCollapsed = !state.sidebarCollapsed;
   document.getElementById('sidebar').classList.toggle('collapsed', state.sidebarCollapsed);
+}
+
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('mobile-open');
+  document.getElementById('sidebar-backdrop').classList.add('visible');
+}
+
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-backdrop').classList.remove('visible');
 }
 
 // ============================================================
@@ -478,7 +539,8 @@ async function renderPage(page) {
     stats: renderStats,
     export: renderExport,
     planning: renderPlanning,
-    settings: renderSettings
+    settings: renderSettings,
+    research: renderResearch
   };
   if (renderers[page]) await renderers[page]();
 }
@@ -2264,7 +2326,7 @@ async function exportData(format) {
 }
 
 function buildMarkdownExport(data) {
-  let md = `# Dream Story Universe Export\n\nExported: ${data.exportedAt}\n\n`;
+  let md = `# MZ Studio Universe Export\n\nExported: ${data.exportedAt}\n\n`;
   if (data.characters?.length) {
     md += `## Characters (${data.characters.length})\n\n`;
     data.characters.forEach(c => {
@@ -2408,7 +2470,7 @@ async function renderSettings() {
       <div class="settings-section">
         <div class="settings-title">About</div>
         <div class="settings-row">
-          <div><div class="settings-label">Dream Story Universe Studio</div><div class="settings-desc">Version 1.0 · Offline-first · IndexedDB</div></div>
+          <div><div class="settings-label">MZ Studio</div><div class="settings-desc">Version 1.0 · Offline-first · IndexedDB</div></div>
         </div>
         <div class="settings-row">
           <div><div class="settings-label">Storage</div><div class="settings-desc">Local browser storage (IndexedDB)</div></div>
@@ -2536,6 +2598,280 @@ function filterTimeline() {
 }
 
 // ============================================================
+// RESEARCH
+// ============================================================
+async function renderResearch() {
+  const entries = await dbGet('research');
+  const categories = ['Mythology','History','Science','Geography','Culture','Psychology','Technology','Magic Systems','Other'];
+  const activeTab = state.researchTab || 'all';
+
+  const filtered = activeTab === 'all' ? entries : entries.filter(e => e.category === activeTab);
+  const counts = {};
+  categories.forEach(c => counts[c] = entries.filter(e => e.category === c).length);
+
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div style="max-width:1100px">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Research Hub</div>
+          <div class="section-sub">Collect and organise research for your universe — ${entries.length} entries</div>
+        </div>
+        <button class="btn btn-primary" onclick="showNewResearchModal()">+ New Entry</button>
+      </div>
+
+      <!-- Category filter bar -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
+        <button class="btn btn-sm${activeTab==='all'?' btn-primary':''}" onclick="setResearchTab('all')">All (${entries.length})</button>
+        ${categories.map(c=>`<button class="btn btn-sm${activeTab===c?' btn-primary':''}" onclick="setResearchTab('${c}')">${c}${counts[c]?' ('+counts[c]+')':''}</button>`).join('')}
+      </div>
+
+      <!-- Search bar -->
+      <div style="margin-bottom:20px">
+        <div class="search-bar" style="max-width:100%;display:flex">
+          <span style="color:var(--text3);font-size:14px">🔍</span>
+          <input type="text" placeholder="Search research entries..." id="research-search" class="form-input" style="border:none;background:none;flex:1" oninput="filterResearchEntries(this.value)" />
+        </div>
+      </div>
+
+      <!-- Entries -->
+      <div id="research-entries-list">
+        ${renderResearchList(filtered)}
+      </div>
+    </div>
+  `;
+}
+
+function renderResearchList(entries) {
+  if (entries.length === 0) return `
+    <div class="empty-state">
+      <div class="empty-icon">🔬</div>
+      <div class="empty-title">No research entries yet</div>
+      <div class="empty-desc">Add notes, links, references, and findings to power your storytelling.</div>
+      <button class="btn btn-primary" style="margin-top:16px" onclick="showNewResearchModal()">+ New Entry</button>
+    </div>`;
+
+  const catColors = {
+    Mythology:'pink',History:'gold',Science:'teal',Geography:'teal',
+    Culture:'accent',Psychology:'pink',Technology:'accent',
+    'Magic Systems':'coral',Other:'accent'
+  };
+
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
+    ${entries.sort((a,b)=>b.updatedAt-a.updatedAt).map(e=>`
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px;cursor:pointer;transition:all 0.15s;display:flex;flex-direction:column;gap:8px" onclick="viewResearchEntry('${e.id}')" onmouseover="this.style.borderColor='var(--border2)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+          <div style="font-size:14px;font-weight:600;color:var(--text);line-height:1.3;flex:1">${sanitize(e.title)}</div>
+          <span class="tag tag-${catColors[e.category]||'accent'}" style="flex-shrink:0">${sanitize(e.category||'Other')}</span>
+        </div>
+        ${e.summary ? `<div style="font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden">${sanitize(e.summary)}</div>` : ''}
+        ${e.source ? `<div style="font-size:11px;color:var(--text3);display:flex;align-items:center;gap:4px">
+          <span>📎</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px">${sanitize(e.source)}</span>
+        </div>` : ''}
+        ${e.tags ? `<div style="display:flex;gap:4px;flex-wrap:wrap">${e.tags.split(',').map(t=>`<span class="tag tag-accent" style="font-size:10px">${sanitize(t.trim())}</span>`).join('')}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+          <span style="font-size:11px;color:var(--text3);flex:1">${timeAgo(e.updatedAt)}</span>
+          ${e.starred ? '<span style="color:var(--gold);font-size:14px">★</span>' : ''}
+          <button class="btn btn-sm" onclick="event.stopPropagation();editResearchEntry('${e.id}')">Edit</button>
+          <button class="btn btn-sm" onclick="event.stopPropagation();deleteItem('research','${e.id}','Research entry',renderResearch)" style="color:var(--danger)">✕</button>
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+async function filterResearchEntries(query) {
+  const entries = await dbGet('research');
+  const activeTab = state.researchTab || 'all';
+  let filtered = activeTab === 'all' ? entries : entries.filter(e => e.category === activeTab);
+  if (query.trim()) {
+    const q = query.toLowerCase();
+    filtered = filtered.filter(e => (e.title||'').toLowerCase().includes(q) || (e.summary||'').toLowerCase().includes(q) || (e.content||'').toLowerCase().includes(q) || (e.tags||'').toLowerCase().includes(q));
+  }
+  const el = document.getElementById('research-entries-list');
+  if (el) el.innerHTML = renderResearchList(filtered);
+}
+
+function setResearchTab(tab) {
+  state.researchTab = tab;
+  renderResearch();
+}
+
+async function viewResearchEntry(id) {
+  const e = await dbGet('research', id);
+  showModal(`
+    <div class="panel-header">
+      <div style="flex:1">
+        <div class="panel-title">${sanitize(e.title)}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${sanitize(e.category||'')} · ${timeAgo(e.updatedAt)}</div>
+      </div>
+      <button class="btn btn-sm" onclick="closeModal();editResearchEntry('${e.id}')">Edit</button>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body" style="padding:20px">
+      ${e.summary ? `
+        <div style="background:var(--bg3);border-radius:var(--radius);padding:14px;margin-bottom:16px;border-left:3px solid var(--accent)">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em">Summary</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6">${sanitize(e.summary)}</div>
+        </div>` : ''}
+      ${e.content ? `
+        <div style="font-size:13px;color:var(--text);line-height:1.8;white-space:pre-wrap;margin-bottom:16px">${sanitize(e.content)}</div>` : ''}
+      ${e.source ? `
+        <div style="display:flex;align-items:center;gap:6px;padding:10px 12px;background:var(--bg3);border-radius:var(--radius);margin-bottom:12px">
+          <span style="color:var(--text3);font-size:12px">Source:</span>
+          <span style="font-size:12px;color:var(--accent2)">${sanitize(e.source)}</span>
+        </div>` : ''}
+      ${e.relatedChars ? `
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Related Characters</div>
+          <div>${e.relatedChars.split(',').map(t=>`<span class="tag tag-pink" style="margin-right:4px">${sanitize(t.trim())}</span>`).join('')}</div>
+        </div>` : ''}
+      ${e.tags ? `
+        <div>
+          <div style="font-size:11px;color:var(--text3);margin-bottom:6px">Tags</div>
+          <div>${e.tags.split(',').map(t=>`<span class="tag tag-accent" style="margin-right:4px">${sanitize(t.trim())}</span>`).join('')}</div>
+        </div>` : ''}
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Close</button>
+      <button class="btn btn-primary" onclick="closeModal();editResearchEntry('${e.id}')">Edit</button>
+    </div>
+  `, 'panel-lg');
+}
+
+function showNewResearchModal() {
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">New Research Entry</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input class="form-input" id="f-title" placeholder="e.g. Norse Mythology — Yggdrasil" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="f-cat">
+            <option>Mythology</option><option>History</option><option>Science</option>
+            <option>Geography</option><option>Culture</option><option>Psychology</option>
+            <option>Technology</option><option>Magic Systems</option><option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source / Reference</label>
+          <input class="form-input" id="f-source" placeholder="URL, book title, page..." />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Summary</label>
+        <textarea class="form-textarea" id="f-summary" style="min-height:70px" placeholder="Quick overview of this research..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detailed Notes</label>
+        <textarea class="form-textarea" id="f-content" style="min-height:130px" placeholder="Full research notes, quotes, observations..."></textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Related Characters</label>
+          <input class="form-input" id="f-chars" placeholder="Aria, Marcus..." />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <input class="form-input" id="f-tags" placeholder="magic, lore, combat..." />
+        </div>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px">
+        <label class="toggle"><input type="checkbox" id="f-starred"><div class="toggle-slider"></div></label>
+        <span style="font-size:13px;color:var(--text2)">Star this entry (important reference)</span>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewResearchEntry()">Save Entry</button>
+    </div>
+  `, 'panel-lg');
+}
+
+async function saveNewResearchEntry() {
+  const title = v('f-title');
+  if (!title) { toast('Title required', 'error'); return; }
+  const starred = document.getElementById('f-starred')?.checked || false;
+  await dbPut('research', {
+    title, category: v('f-cat'), source: v('f-source'),
+    summary: v('f-summary'), content: v('f-content'),
+    relatedChars: v('f-chars'), tags: v('f-tags'),
+    starred, projectId: state.currentProject?.id || null
+  });
+  closeModal(); toast('Research entry saved!', 'success'); renderResearch();
+}
+
+async function editResearchEntry(id) {
+  const e = await dbGet('research', id);
+  showModal(`
+    <div class="panel-header">
+      <div class="panel-title">Edit Research Entry</div>
+      <button class="btn btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input class="form-input" id="f-title" value="${sanitize(e.title||'')}" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="f-cat">
+            ${['Mythology','History','Science','Geography','Culture','Psychology','Technology','Magic Systems','Other'].map(c=>`<option${e.category===c?' selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source</label>
+          <input class="form-input" id="f-source" value="${sanitize(e.source||'')}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Summary</label>
+        <textarea class="form-textarea" id="f-summary" style="min-height:70px">${sanitize(e.summary||'')}</textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detailed Notes</label>
+        <textarea class="form-textarea" id="f-content" style="min-height:130px">${sanitize(e.content||'')}</textarea>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Related Characters</label>
+          <input class="form-input" id="f-chars" value="${sanitize(e.relatedChars||'')}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tags</label>
+          <input class="form-input" id="f-tags" value="${sanitize(e.tags||'')}" />
+        </div>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:10px">
+        <label class="toggle"><input type="checkbox" id="f-starred"${e.starred?' checked':''}><div class="toggle-slider"></div></label>
+        <span style="font-size:13px;color:var(--text2)">Starred entry</span>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="updateResearchEntry('${id}')">Save</button>
+    </div>
+  `, 'panel-lg');
+}
+
+async function updateResearchEntry(id) {
+  const e = await dbGet('research', id);
+  e.title=v('f-title'); e.category=v('f-cat'); e.source=v('f-source');
+  e.summary=v('f-summary'); e.content=v('f-content');
+  e.relatedChars=v('f-chars'); e.tags=v('f-tags');
+  e.starred = document.getElementById('f-starred')?.checked || false;
+  await dbPut('research', e);
+  closeModal(); toast('Saved!', 'success'); renderResearch();
+}
+
+// ============================================================
 // GLOBAL AUTOSAVE (every 30s)
 // ============================================================
 setInterval(async () => {
@@ -2565,7 +2901,7 @@ async function init() {
   }
 
   nav('dashboard');
-  toast('Welcome to Dream Story Universe Studio ✦', 'success');
+  toast('Welcome to MZ Studio ✦', 'success');
 }
 
 init().catch(console.error);
